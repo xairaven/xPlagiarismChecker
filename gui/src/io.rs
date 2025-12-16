@@ -25,7 +25,8 @@ impl Config {
             Some(project_dirs) => Ok(project_dirs.config_dir().join(Self::FILENAME)),
             None => {
                 let mut current_dir =
-                    env::current_dir().map_err(ConfigError::CurrentDirectory)?;
+                    env::current_exe().map_err(ConfigError::CurrentDirectory)?;
+                current_dir.pop(); // Remove executable name
                 current_dir.push(Self::FILENAME);
                 Ok(current_dir)
             },
@@ -68,7 +69,8 @@ impl Config {
 impl Logger {
     pub fn path(file_name: String) -> Result<PathBuf, LogError> {
         const LOG_DIR: &str = "logs";
-        let mut current_dir = env::current_dir().map_err(LogError::CurrentDirectory)?;
+        let mut current_dir = env::current_exe().map_err(LogError::CurrentDirectory)?;
+        current_dir.pop(); // Remove executable name
         current_dir.push(LOG_DIR);
 
         std::fs::create_dir_all(&current_dir).map_err(LogError::LogDirectory)?;
