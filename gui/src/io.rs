@@ -1,11 +1,19 @@
 use crate::config::{Config, ConfigError};
 use directories::ProjectDirs;
 use std::env;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 
 pub const QUALIFIER: &str = "dev";
 pub const ORGANIZATION: &str = "xairaven";
 pub const APPLICATION: &str = "xPlagiarismChecker";
+
+pub fn create_parent_directories(path: &Path) -> Result<(), std::io::Error> {
+    if let Some(parent_path) = path.parent() {
+        return std::fs::create_dir_all(parent_path);
+    }
+
+    Ok(())
+}
 
 impl Config {
     const FILENAME: &str = "config.toml";
@@ -48,6 +56,8 @@ impl Config {
         let data = toml::to_string(&self).map_err(ConfigError::Serialization)?;
         let path = Self::path()?;
 
+        create_parent_directories(&path)
+            .map_err(ConfigError::ParentDirectoriesCreation)?;
         std::fs::write(path, data).map_err(ConfigError::Write)?;
 
         Ok(())

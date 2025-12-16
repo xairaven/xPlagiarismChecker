@@ -34,6 +34,9 @@ pub enum ConfigError {
     #[error("Failed to deserialize. {0}")]
     Deserialization(#[from] toml::de::Error),
 
+    #[error("Failed to create parent directories. {0}")]
+    ParentDirectoriesCreation(std::io::Error),
+
     #[error("Failed to write to file. {0}")]
     Write(std::io::Error),
 }
