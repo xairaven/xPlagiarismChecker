@@ -1,3 +1,4 @@
+use rust_i18n::t;
 use serde::{Deserialize, Serialize};
 use strum::EnumIter;
 
