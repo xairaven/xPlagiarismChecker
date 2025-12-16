@@ -26,8 +26,8 @@ impl Language {
 impl Localized for Language {
     fn localize(&self) -> String {
         match self {
-            Self::English => t!("Language.English").to_string(),
-            Self::Ukrainian => t!("Language.Ukrainian").to_string(),
+            Self::English => t!("Settings.Language.English").to_string(),
+            Self::Ukrainian => t!("Settings.Language.Ukrainian").to_string(),
         }
     }
 }

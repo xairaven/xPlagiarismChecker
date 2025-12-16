@@ -1,6 +1,6 @@
 {
   "_version": 1,
 
-  "Language.English": "Англійська",
-  "Language.Ukrainian": "Українська"
+  "Settings.Language.English": "Англійська",
+  "Settings.Language.Ukrainian": "Українська"
 }

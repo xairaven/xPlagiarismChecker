@@ -14,7 +14,7 @@ fn main() {
         std::process::exit(1);
     });
 
-    dbg!(config);
+    rust_i18n::set_locale(&config.language.code());
 }
 
 mod config;
