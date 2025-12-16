@@ -5,6 +5,7 @@
 dev-resources
 
 # Any logs
+logs/
 *.log
 
 # Possible libs folder

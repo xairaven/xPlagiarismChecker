@@ -1,4 +1,5 @@
 use crate::config::{Config, ConfigError};
+use crate::logs::{LogError, Logger};
 use directories::ProjectDirs;
 use std::env;
 use std::path::{Path, PathBuf};
@@ -61,5 +62,17 @@ impl Config {
         std::fs::write(path, data).map_err(ConfigError::Write)?;
 
         Ok(())
+    }
+}
+
+impl Logger {
+    pub fn path(file_name: String) -> Result<PathBuf, LogError> {
+        const LOG_DIR: &str = "logs";
+        let mut current_dir = env::current_dir().map_err(LogError::CurrentDirectory)?;
+        current_dir.push(LOG_DIR);
+
+        std::fs::create_dir_all(&current_dir).map_err(LogError::LogDirectory)?;
+
+        Ok(current_dir.join(file_name))
     }
 }

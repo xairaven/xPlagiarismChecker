@@ -1,4 +1,5 @@
 use crate::localization::Language;
+use crate::logs;
 use crate::logs::LogLevel;
 use crate::ui::themes::Theme;
 use serde::{Deserialize, Serialize};
@@ -16,8 +17,8 @@ impl Default for Config {
     fn default() -> Self {
         Self {
             language: Language::default(),
-            log_format: "".to_string(),
-            log_level: LogLevel::default(),
+            log_format: logs::defaults::LOG_FORMAT.to_string(),
+            log_level: logs::defaults::LOG_LEVEL,
             theme: Theme::default(),
         }
     }

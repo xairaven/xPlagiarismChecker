@@ -2,6 +2,7 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 use crate::config::Config;
+use crate::logs::Logger;
 
 // Defining folder with locales. Path: crate/locales
 rust_i18n::i18n!("locales", fallback = "en");
@@ -13,6 +14,13 @@ fn main() {
     });
 
     rust_i18n::set_locale(&config.language.code());
+
+    Logger::from_config(&config)
+        .setup()
+        .unwrap_or_else(|error| {
+            eprintln!("Logger initialization failed: {}", error);
+            std::process::exit(1);
+        });
 }
 
 mod config;
