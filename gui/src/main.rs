@@ -3,6 +3,7 @@
 
 use crate::config::Config;
 use crate::logs::Logger;
+use crate::ui::Ui;
 
 // Defining folder with locales. Path: crate/locales
 rust_i18n::i18n!("locales", fallback = "en");
@@ -21,9 +22,15 @@ fn main() {
             eprintln!("Logger initialization failed: {}", error);
             std::process::exit(1);
         });
+
+    Ui::default().start(config).unwrap_or_else(|error| {
+        log::error!("UI failed to start: {error}");
+        std::process::exit(1);
+    });
 }
 
 mod config;
+mod context;
 mod errors;
 mod io;
 mod localization;
