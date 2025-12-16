@@ -1,13 +1,13 @@
 use crate::config::Config;
 use chrono::{Datelike, Local, Timelike};
-use log::{LevelFilter, Record};
+use log::LevelFilter;
 use serde::{Deserialize, Serialize};
-use std::fmt::Arguments;
 use thiserror::Error;
 use utils::enum_from_mirror;
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 pub enum LogLevel {
+    #[default]
     Off,
     Error,
     Warn,
@@ -25,22 +25,13 @@ enum_from_mirror!(LogLevel, LevelFilter, {
     Trace,
 });
 
-pub mod defaults {
-    use super::LogLevel;
-
-    pub const LOG_LEVEL: LogLevel = LogLevel::Off;
-    pub const LOG_FORMAT: &str = "[$Y-$m-$D $H:$M $LEVEL] $MESSAGE";
-}
-
 pub struct Logger {
-    format: String,
     log_level: LevelFilter,
 }
 
 impl Logger {
     pub fn from_config(config: &Config) -> Self {
         Self {
-            format: config.log_format.clone(),
             log_level: config.log_level.into(),
         }
     }
@@ -58,35 +49,21 @@ impl Logger {
         fern::Dispatch::new()
             .level(self.log_level)
             .format(move |out, message, record| {
-                let formatted = self.format_message(message, record);
-
-                out.finish(format_args!("{formatted}"))
+                let time = Local::now();
+                out.finish(format_args!(
+                    "[{:0>2}-{:0>2}-{:0>2} {:0>2}:{:0>2} {}] {}",
+                    time.year(),
+                    time.month(),
+                    time.day(),
+                    time.hour(),
+                    time.minute(),
+                    record.level(),
+                    message
+                ))
             })
             .chain(file)
             .apply()
             .map_err(LogError::SetLoggerError)
-    }
-
-    fn format_message(&self, message: &Arguments, record: &Record) -> String {
-        let log_message = self.format.clone();
-
-        // Time
-        let time = Local::now();
-
-        log_message
-            // Time
-            .replacen("$Y", &format!("{:0>2}", time.year()), 1)
-            .replacen("$m", &format!("{:0>2}", time.month()), 1)
-            .replacen("$D", &format!("{:0>2}", time.day()), 1)
-            .replacen("$H", &format!("{:0>2}", time.hour()), 1)
-            .replacen("$M", &format!("{:0>2}", time.minute()), 1)
-            .replacen("$S", &format!("{:0>2}", time.second()), 1)
-            // Level
-            .replacen("$LEVEL", record.level().as_str(), 1)
-            // Target
-            .replacen("$TARGET", record.target(), 1)
-            // Message
-            .replacen("$MESSAGE", &message.to_string(), 1)
     }
 
     fn generate_file_name() -> String {
