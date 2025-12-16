@@ -2,6 +2,7 @@ use crate::localization::Language;
 use crate::logs::LogLevel;
 use crate::ui::themes::Theme;
 use serde::{Deserialize, Serialize};
+use thiserror::Error;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Config {
@@ -20,4 +21,19 @@ impl Default for Config {
             theme: Theme::default(),
         }
     }
+}
+
+#[derive(Debug, Error)]
+pub enum ConfigError {
+    #[error("Failed to get current directory. {0}")]
+    CurrentDirectory(std::io::Error),
+
+    #[error("Failed to serialize. {0}")]
+    Serialization(#[from] toml::ser::Error),
+
+    #[error("Failed to deserialize. {0}")]
+    Deserialization(#[from] toml::de::Error),
+
+    #[error("Failed to write to file. {0}")]
+    Write(std::io::Error),
 }

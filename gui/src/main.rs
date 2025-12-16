@@ -12,6 +12,8 @@ fn main() {
 }
 
 mod config;
+mod errors;
+mod io;
 mod localization;
 mod logs;
 mod ui;
