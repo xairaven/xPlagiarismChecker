@@ -16,6 +16,8 @@ repository = "https://github.com/xairaven/xPlagiarismChecker"
 workspace = true
 
 [dependencies]
+utils = { path = "../utils" }
+
 chrono = "0.4.42"
 egui = "0.33.3"
 eframe = { version = "0.33.3", default-features = false, features = [
@@ -33,3 +35,4 @@ semver = "1.0.27"
 strum = { version = "0.27.2", features = ["derive"] }
 thiserror = "2.0.17"
 toml = "0.9.8"
+serde = { version = "1.0.228", features = ["derive"] }

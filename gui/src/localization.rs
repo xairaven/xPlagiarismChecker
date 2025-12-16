@@ -1,11 +1,13 @@
+use serde::{Deserialize, Serialize};
 use strum::EnumIter;
 
 pub trait Localized {
     fn localize(&self) -> String;
 }
 
-#[derive(Debug, EnumIter, PartialEq)]
+#[derive(Debug, Default, Clone, EnumIter, PartialEq, Serialize, Deserialize)]
 pub enum Language {
+    #[default]
     English,
     Ukrainian,
 }

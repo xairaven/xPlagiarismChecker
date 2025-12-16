@@ -11,4 +11,7 @@ fn main() {
     println!("Hello, world!");
 }
 
+mod config;
 mod localization;
+mod logs;
+mod ui;
