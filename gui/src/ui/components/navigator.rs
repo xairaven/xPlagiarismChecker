@@ -2,10 +2,26 @@ use crate::localization::{Label, Localized};
 use crate::ui::pages::PageId;
 use crate::ui::styles;
 use egui::SidePanel;
+use std::collections::BTreeMap;
 use strum::IntoEnumIterator;
 
-#[derive(Debug, Default)]
-pub struct Navigator;
+#[derive(Debug)]
+pub struct Navigator {
+    tabs: BTreeMap<PageId, String>,
+}
+
+impl Default for Navigator {
+    fn default() -> Self {
+        let mut tabs: BTreeMap<PageId, String> = BTreeMap::new();
+
+        for page in PageId::iter() {
+            let label = page.to_string();
+            tabs.insert(page, label);
+        }
+
+        Self { tabs }
+    }
+}
 
 impl Navigator {
     pub fn show_content(&mut self, ui: &mut egui::Ui, active_page: &mut PageId) {
@@ -34,9 +50,9 @@ impl Navigator {
                 ui.with_layout(
                     egui::Layout::top_down_justified(egui::Align::Min),
                     |ui| {
-                        for page in PageId::iter() {
-                            let is_active = page == *active_page;
-                            let button = egui::Button::new(page.localize())
+                        for (tab, label) in &self.tabs {
+                            let is_active = tab == active_page;
+                            let button = egui::Button::new(label)
                                 .fill(if is_active {
                                     ui.visuals().selection.bg_fill
                                 } else {
@@ -45,7 +61,7 @@ impl Navigator {
                                 .min_size([120.0, 40.0].into());
 
                             if ui.add(button).clicked() {
-                                *active_page = page;
+                                *active_page = *tab;
                             }
 
                             ui.add_space(styles::spacing::LARGE);

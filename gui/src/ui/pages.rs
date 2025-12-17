@@ -3,7 +3,7 @@ use crate::localization::Localized;
 use rust_i18n::t;
 use strum::EnumIter;
 
-#[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash, EnumIter)]
+#[derive(Debug, Default, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, EnumIter)]
 pub enum PageId {
     #[default]
     Main,
@@ -18,10 +18,29 @@ impl PageId {
             Self::Main => {
                 ui.label("Main");
             },
-            Self::Settings => todo!(),
-            Self::About => todo!(),
+            Self::Settings => {
+                ui.label("Settings");
+            },
+            Self::About => {
+                ui.label("About");
+            },
             Self::Exit => ui.ctx().send_viewport_cmd(egui::ViewportCommand::Close),
         }
+    }
+}
+
+impl std::fmt::Display for PageId {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let localized = self.localize();
+
+        let text = match self {
+            Self::Main => format!("{:<5} {}", "💽", localized),
+            Self::Settings => format!("{:<5} {}", "⚙", localized),
+            Self::About => format!("{:<5} {}", "ℹ", localized),
+            Self::Exit => format!("{:<5} {}", "🗙", localized),
+        };
+
+        write!(f, "{text}")
     }
 }
 
