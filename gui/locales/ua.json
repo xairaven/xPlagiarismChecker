@@ -1,9 +1,12 @@
 {
   "_version": 1,
 
+  "Navigation.Label.Menu": "Меню",
+
   "Page.Title.Main": "Головна",
   "Page.Title.Settings": "Налаштування",
   "Page.Title.About": "Про програму",
+  "Page.Title.Exit": "Вихід",
 
   "Settings.Language.English": "Англійська",
   "Settings.Language.Ukrainian": "Українська"

@@ -32,3 +32,17 @@ impl Localized for Language {
         }
     }
 }
+
+pub enum Label {
+    NavigationMenu,
+}
+
+impl Localized for Label {
+    fn localize(&self) -> String {
+        let tag = match self {
+            Self::NavigationMenu => "Navigation.Label.Menu",
+        };
+
+        t!(tag).to_string()
+    }
+}

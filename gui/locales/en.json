@@ -1,9 +1,12 @@
 {
   "_version": 1,
 
+  "Navigation.Label.Menu": "Menu",
+
   "Page.Title.Main": "Main Page",
   "Page.Title.Settings": "Settings",
   "Page.Title.About": "About",
+  "Page.Title.Exit": "Exit",
 
   "Settings.Language.English": "English",
   "Settings.Language.Ukrainian": "Ukrainian"

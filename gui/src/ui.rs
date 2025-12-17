@@ -57,7 +57,9 @@ impl Ui {
 }
 
 pub mod app;
+pub mod components;
 pub mod context;
 pub mod modals;
 pub mod pages;
+pub mod styles;
 pub mod themes;

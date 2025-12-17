@@ -10,7 +10,7 @@ pub struct App {
 }
 
 impl App {
-    pub fn new(_cc: &eframe::CreationContext<'_>, config: Config) -> Self {
+    pub fn new(_: &eframe::CreationContext<'_>, config: Config) -> Self {
         let ctx = Context::new(config);
 
         Self {
@@ -23,6 +23,11 @@ impl App {
 impl eframe::App for App {
     fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
         egui::CentralPanel::default().show(ctx, |ui| {
+            self.context
+                .gui
+                .navigator
+                .show_content(ui, &mut self.context.gui.active_page);
+
             self.context
                 .active_page()
                 .show_content(ui, &mut self.context);
