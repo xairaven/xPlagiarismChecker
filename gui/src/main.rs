@@ -10,7 +10,7 @@ rust_i18n::i18n!("locales", fallback = "en");
 
 fn main() {
     let config = Config::from_file().unwrap_or_else(|error| {
-        eprintln!("Config initialization failed: {}", error);
+        Ui::native_panic_message(error);
         std::process::exit(1);
     });
 
@@ -19,12 +19,12 @@ fn main() {
     Logger::from_config(&config)
         .setup()
         .unwrap_or_else(|error| {
-            eprintln!("Logger initialization failed: {}", error);
+            Ui::native_panic_message(error);
             std::process::exit(1);
         });
 
     Ui::default().start(config).unwrap_or_else(|error| {
-        log::error!("UI failed to start: {error}");
+        Ui::native_panic_message(error);
         std::process::exit(1);
     });
 }

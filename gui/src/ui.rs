@@ -1,4 +1,5 @@
 use crate::config::Config;
+use crate::errors::ProjectError;
 use crate::ui::app::App;
 
 pub struct Ui {
@@ -18,7 +19,7 @@ impl Default for Ui {
 }
 
 impl Ui {
-    pub fn start(self, config: Config) -> eframe::Result {
+    pub fn start(self, config: Config) -> Result<(), ProjectError> {
         let native_options = eframe::NativeOptions {
             viewport: egui::ViewportBuilder::default()
                 .with_app_id(&self.title) // Wayland requirement
@@ -43,6 +44,15 @@ impl Ui {
             native_options,
             Box::new(|cc| Ok(Box::new(App::new(cc, config)))),
         )
+        .map_err(ProjectError::EFrame)
+    }
+
+    pub fn native_panic_message(error: ProjectError) {
+        rfd::MessageDialog::new()
+            .set_title("Critical Error")
+            .set_description(error.to_string())
+            .set_level(rfd::MessageLevel::Error)
+            .show();
     }
 }
 

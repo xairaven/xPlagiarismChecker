@@ -1,4 +1,5 @@
 use crate::config::{Config, ConfigError};
+use crate::errors::ProjectError;
 use crate::logs::{LogError, Logger};
 use directories::ProjectDirs;
 use std::env;
@@ -19,7 +20,7 @@ pub fn create_parent_directories(path: &Path) -> Result<(), std::io::Error> {
 impl Config {
     const FILENAME: &str = "config.toml";
 
-    fn path() -> Result<PathBuf, ConfigError> {
+    fn path() -> Result<PathBuf, ProjectError> {
         let dirs = ProjectDirs::from(QUALIFIER, ORGANIZATION, APPLICATION);
         match dirs {
             Some(project_dirs) => Ok(project_dirs.config_dir().join(Self::FILENAME)),
@@ -33,7 +34,7 @@ impl Config {
         }
     }
 
-    pub fn from_file() -> Result<Self, ConfigError> {
+    pub fn from_file() -> Result<Self, ProjectError> {
         match Self::path() {
             Ok(path) => {
                 let text = std::fs::read_to_string(&path);
@@ -54,7 +55,7 @@ impl Config {
         }
     }
 
-    pub fn save_to_file(&self) -> Result<(), ConfigError> {
+    pub fn save_to_file(&self) -> Result<(), ProjectError> {
         let data = toml::to_string(&self).map_err(ConfigError::Serialization)?;
         let path = Self::path()?;
 

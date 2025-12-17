@@ -1,4 +1,5 @@
 use crate::config::Config;
+use crate::errors::ProjectError;
 use chrono::{Datelike, Local, Timelike};
 use log::LevelFilter;
 use serde::{Deserialize, Serialize};
@@ -36,7 +37,7 @@ impl Logger {
         }
     }
 
-    pub fn setup(self) -> Result<(), LogError> {
+    pub fn setup(self) -> Result<(), ProjectError> {
         if self.log_level.eq(&LevelFilter::Off) {
             return Ok(());
         }
@@ -64,6 +65,7 @@ impl Logger {
             .chain(file)
             .apply()
             .map_err(LogError::SetLoggerError)
+            .map_err(ProjectError::LogError)
     }
 
     fn generate_file_name() -> String {
