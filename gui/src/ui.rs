@@ -21,6 +21,7 @@ impl Ui {
     pub fn start(self, config: Config) -> eframe::Result {
         let native_options = eframe::NativeOptions {
             viewport: egui::ViewportBuilder::default()
+                .with_app_id(&self.title) // Wayland requirement
                 .with_title(&self.title)
                 .with_inner_size([self.min_width, self.min_height])
                 .with_min_inner_size([self.min_width, self.min_height])
