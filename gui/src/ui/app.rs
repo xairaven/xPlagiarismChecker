@@ -1,6 +1,7 @@
 use crate::config::Config;
 use crate::context::Context;
-use crate::ui::modals::{ErrorModal, Modal};
+use crate::ui::modals::Modal;
+use crate::ui::modals::error::ErrorModal;
 
 pub struct App {
     context: Context,
@@ -34,11 +35,11 @@ impl eframe::App for App {
 }
 
 impl App {
-    fn show_opened_modals(&mut self, ui: &egui::Ui) {
+    fn show_opened_modals(&mut self, ui: &mut egui::Ui) {
         let mut closed_modals: Vec<usize> = vec![];
 
         for (index, modal) in self.errors.iter_mut().enumerate() {
-            modal.show(ui, &mut self.context);
+            modal.show_content(ui, &mut self.context);
 
             if modal.is_closed() {
                 closed_modals.push(index);

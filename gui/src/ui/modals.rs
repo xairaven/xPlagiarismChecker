@@ -61,30 +61,4 @@ pub trait Modal: Send + Sync {
     fn modal_fields(&self) -> &ModalFields;
 }
 
-pub struct ErrorModal {
-    pub fields: ModalFields,
-    pub message: String,
-}
-
-impl ErrorModal {
-    pub fn new(message: String) -> Self {
-        Self {
-            fields: ModalFields::default().with_title("Error".to_string()),
-            message,
-        }
-    }
-}
-
-impl Modal for ErrorModal {
-    fn show_content(&mut self, ui: &mut egui::Ui, _ctx: &mut Context) {
-        ui.label(&self.message);
-    }
-
-    fn close(&mut self) {
-        self.fields.is_open = false;
-    }
-
-    fn modal_fields(&self) -> &ModalFields {
-        &self.fields
-    }
-}
+pub mod error;

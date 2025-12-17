@@ -1,5 +1,5 @@
 use crate::config::Config;
-use crate::ui::modals::ErrorModal;
+use crate::ui::modals::error::ErrorModal;
 use crossbeam::channel::{Receiver, Sender};
 
 pub struct Context {
