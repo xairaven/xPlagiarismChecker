@@ -1,6 +1,10 @@
 {
   "_version": 1,
 
+  "Page.Title.Main": "Головна",
+  "Page.Title.Settings": "Налаштування",
+  "Page.Title.About": "Про програму",
+
   "Settings.Language.English": "Англійська",
   "Settings.Language.Ukrainian": "Українська"
 }

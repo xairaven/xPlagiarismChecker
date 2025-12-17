@@ -1,6 +1,10 @@
 {
   "_version": 1,
 
+  "Page.Title.Main": "Main Page",
+  "Page.Title.Settings": "Settings",
+  "Page.Title.About": "About",
+
   "Settings.Language.English": "English",
   "Settings.Language.Ukrainian": "Ukrainian"
 }

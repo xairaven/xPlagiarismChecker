@@ -23,18 +23,26 @@ impl App {
 impl eframe::App for App {
     fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
         egui::CentralPanel::default().show(ctx, |ui| {
-            // Getting modals from the channels (in context).
-            if let Ok(modal) = self.context.errors_rx.try_recv() {
-                self.errors.push(modal);
-            }
+            self.context
+                .active_page()
+                .show_content(ui, &mut self.context);
 
-            // Showing modals.
-            self.show_opened_modals(ui);
+            self.check_for_modals(ui);
         });
     }
 }
 
 impl App {
+    fn check_for_modals(&mut self, ui: &mut egui::Ui) {
+        // Getting modals from the channels (in context).
+        if let Ok(modal) = self.context.gui.errors_rx.try_recv() {
+            self.errors.push(modal);
+        }
+
+        // Showing modals.
+        self.show_opened_modals(ui);
+    }
+
     fn show_opened_modals(&mut self, ui: &mut egui::Ui) {
         let mut closed_modals: Vec<usize> = vec![];
 
