@@ -10,8 +10,11 @@ pub struct App {
 }
 
 impl App {
-    pub fn new(_: &eframe::CreationContext<'_>, config: Config) -> Self {
+    pub fn new(cc: &eframe::CreationContext<'_>, config: Config) -> Self {
         let ctx = Context::new(config);
+
+        let style = ctx.config.theme.into_aesthetix_theme().custom_style();
+        cc.egui_ctx.set_style(style);
 
         Self {
             context: ctx,
