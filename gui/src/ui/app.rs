@@ -1,5 +1,6 @@
 use crate::config::Config;
 use crate::context::Context;
+use crate::ui::components::root::Root;
 use crate::ui::modals::Modal;
 use crate::ui::modals::error::ErrorModal;
 
@@ -32,9 +33,7 @@ impl eframe::App for App {
                 &mut self.context.gui.active_page,
             );
 
-            self.context
-                .active_page()
-                .show_content(ui, &mut self.context);
+            Root::show_content(ui, &mut self.context);
 
             self.check_for_modals(ui);
         });
