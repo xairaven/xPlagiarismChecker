@@ -26,10 +26,11 @@ impl App {
 impl eframe::App for App {
     fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
         egui::CentralPanel::default().show(ctx, |ui| {
-            self.context
-                .gui
-                .navigator
-                .show_content(ui, &mut self.context.gui.active_page);
+            self.context.gui.navigator.show_content(
+                ui,
+                &self.context.gui.style,
+                &mut self.context.gui.active_page,
+            );
 
             self.context
                 .active_page()

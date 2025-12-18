@@ -1,6 +1,7 @@
 use crate::localization::{Label, Localized};
 use crate::ui::pages::PageId;
-use crate::ui::styles;
+use crate::ui::styles::StyleSettings;
+use crate::ui::{Ui, styles};
 use egui::SidePanel;
 use std::collections::BTreeMap;
 use strum::IntoEnumIterator;
@@ -8,6 +9,7 @@ use strum::IntoEnumIterator;
 #[derive(Debug)]
 pub struct Navigator {
     tabs: BTreeMap<PageId, String>,
+    min_width: f32,
 }
 
 impl Default for Navigator {
@@ -19,31 +21,38 @@ impl Default for Navigator {
             tabs.insert(page, label);
         }
 
-        Self { tabs }
+        let min_width = Ui::default().min_width * 0.25;
+
+        Self { tabs, min_width }
     }
 }
 
 impl Navigator {
-    pub fn show_content(&mut self, ui: &mut egui::Ui, active_page: &mut PageId) {
+    pub fn show_content(
+        &mut self, ui: &mut egui::Ui, style: &StyleSettings, active_page: &mut PageId,
+    ) {
         SidePanel::left("navigator_panel")
             .resizable(false)
-            .default_width(170.0)
+            .frame(
+                egui::Frame::new()
+                    .fill(style.theme.bg_secondary_color_visuals())
+                    .inner_margin(style.theme.margin_style())
+                    .stroke(egui::Stroke::new(
+                        1.0,
+                        style.theme.bg_secondary_color_visuals(),
+                    )),
+            )
+            .min_width(self.min_width)
             .show_separator_line(true)
-            .show_inside(ui, |ui| {
+            .show(ui.ctx(), |ui| {
                 ui.with_layout(
                     egui::Layout::top_down_justified(egui::Align::Center),
                     |ui| {
                         ui.add_space(styles::spacing::XLARGE);
-
                         ui.heading(styles::heading::huge(
                             &Label::NavigationMenu.localize(),
                         ));
-
-                        ui.add_space(styles::spacing::XLARGE);
-
                         egui::warn_if_debug_build(ui);
-
-                        ui.add_space(styles::spacing::XLARGE);
                     },
                 );
 
@@ -51,20 +60,7 @@ impl Navigator {
                     egui::Layout::top_down_justified(egui::Align::Min),
                     |ui| {
                         for (tab, label) in &self.tabs {
-                            let is_active = tab == active_page;
-                            let button = egui::Button::new(label)
-                                .fill(if is_active {
-                                    ui.visuals().selection.bg_fill
-                                } else {
-                                    ui.visuals().widgets.inactive.bg_fill
-                                })
-                                .min_size([120.0, 40.0].into());
-
-                            if ui.add(button).clicked() {
-                                *active_page = *tab;
-                            }
-
-                            ui.add_space(styles::spacing::LARGE);
+                            ui.selectable_value(active_page, *tab, label);
                         }
                     },
                 );

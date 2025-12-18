@@ -13,7 +13,7 @@ pub struct Context {
 impl Context {
     pub fn new(config: Config) -> Self {
         Self {
-            gui: Default::default(),
+            gui: GuiContext::new(&config),
             config,
         }
     }
