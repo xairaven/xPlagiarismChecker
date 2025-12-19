@@ -51,14 +51,24 @@ impl Page for AboutPage {
 
             ui.add_space(20.0);
 
-            ui.hyperlink_to(
-                LocalizedLabel::AboutCheckGithub.localize(),
+            let gh_repo_hyperlink = egui::Hyperlink::from_label_and_url(
+                RichText::new(LocalizedLabel::AboutCheckGithub.localize())
+                    .color(styles::colors::GREEN)
+                    .underline(),
                 GITHUB_REPO_LINK,
             );
-            ui.hyperlink_to(
-                format!("*{}*", LocalizedLabel::AboutLatestRelease.localize()),
+            ui.add(gh_repo_hyperlink);
+
+            let gh_releases_hyperlink = egui::Hyperlink::from_label_and_url(
+                RichText::new(format!(
+                    "*{}*",
+                    LocalizedLabel::AboutLatestRelease.localize()
+                ))
+                .color(styles::colors::GREEN)
+                .underline(),
                 GITHUB_RELEASES_LINK,
             );
+            ui.add(gh_releases_hyperlink);
         });
     }
 

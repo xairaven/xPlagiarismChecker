@@ -19,6 +19,12 @@ impl StyleSettings {
     }
 }
 
+pub mod colors {
+    use egui::Color32;
+
+    pub const GREEN: Color32 = Color32::from_rgb(0, 255, 0);
+}
+
 pub mod heading {
     pub const HUGE: f32 = 20.0;
     pub const XLARGE: f32 = 32.0;
