@@ -1,3 +1,4 @@
+use crate::PROJECT_TITLE;
 use crate::config::{Config, ConfigError};
 use crate::errors::ProjectError;
 use crate::logs::{LogError, Logger};
@@ -7,7 +8,7 @@ use std::path::{Path, PathBuf};
 
 pub const QUALIFIER: &str = "dev";
 pub const ORGANIZATION: &str = "xairaven";
-pub const APPLICATION: &str = "xPlagiarismChecker";
+pub const APPLICATION: &str = PROJECT_TITLE;
 
 pub fn create_parent_directories(path: &Path) -> Result<(), std::io::Error> {
     if let Some(parent_path) = path.parent() {

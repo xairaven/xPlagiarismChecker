@@ -1,69 +1,45 @@
 use crate::config::Config;
 use crate::context::Context;
+use crate::ui::commands::UiCommandHandler;
 use crate::ui::components::root::Root;
-use crate::ui::modals::Modal;
-use crate::ui::modals::error::ErrorModal;
+use crate::ui::modals::ModalsHandler;
+use crate::ui::state::GuiState;
+use egui::CentralPanel;
 
 pub struct App {
-    context: Context,
+    pub context: Context,
+    pub state: GuiState,
 
-    errors: Vec<ErrorModal>,
+    modals_handler: ModalsHandler,
+    ui_command_handler: UiCommandHandler,
 }
 
 impl App {
     pub fn new(cc: &eframe::CreationContext<'_>, config: Config) -> Self {
-        let ctx = Context::new(config);
-
-        let style = ctx.config.theme.into_aesthetix_theme().custom_style();
-        cc.egui_ctx.set_style(style);
+        Self::set_style(&config, cc);
 
         Self {
-            context: ctx,
-            errors: vec![],
+            context: Context::new(config),
+            state: GuiState::new(),
+
+            modals_handler: Default::default(),
+            ui_command_handler: Default::default(),
         }
+    }
+
+    fn set_style(config: &Config, cc: &eframe::CreationContext<'_>) {
+        let style = config.theme.into_aesthetix_theme().custom_style();
+        cc.egui_ctx.set_style(style);
     }
 }
 
 impl eframe::App for App {
     fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
-        egui::CentralPanel::default().show(ctx, |ui| {
-            self.context.gui.navigator.show_content(
-                ui,
-                &self.context.gui.style,
-                &mut self.context.gui.active_page,
-            );
+        CentralPanel::default().show(ctx, |ui| {
+            Root::show_content(ui, &self.context, &mut self.state);
 
-            Root::show_content(ui, &mut self.context);
-
-            self.check_for_modals(ui);
-        });
-    }
-}
-
-impl App {
-    fn check_for_modals(&mut self, ui: &mut egui::Ui) {
-        // Getting modals from the channels (in context).
-        if let Ok(modal) = self.context.gui.errors_rx.try_recv() {
-            self.errors.push(modal);
-        }
-
-        // Showing modals.
-        self.show_opened_modals(ui);
-    }
-
-    fn show_opened_modals(&mut self, ui: &mut egui::Ui) {
-        let mut closed_modals: Vec<usize> = vec![];
-
-        for (index, modal) in self.errors.iter_mut().enumerate() {
-            modal.show_content(ui, &mut self.context);
-
-            if modal.is_closed() {
-                closed_modals.push(index);
-            }
-        }
-
-        closed_modals.iter().for_each(|index| {
-            self.errors.remove(*index);
+            self.ui_command_handler.handle(ui, &mut self.context);
+            self.modals_handler.handle_errors(ui, &self.context);
         });
     }
 }

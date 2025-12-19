@@ -1,5 +1,40 @@
 use crate::context::Context;
+use crate::ui::modals::error::ErrorModal;
 
+#[derive(Debug, Default)]
+pub struct ModalsHandler {
+    errors: Vec<ErrorModal>,
+}
+
+impl ModalsHandler {
+    pub fn handle_errors(&mut self, ui: &mut egui::Ui, ctx: &Context) {
+        // Getting modals from the channels (in context).
+        if let Ok(modal) = ctx.gui.errors_rx.try_recv() {
+            self.errors.push(modal);
+        }
+
+        // Showing modals.
+        self.show_opened_modals(ui, ctx);
+    }
+
+    fn show_opened_modals(&mut self, ui: &mut egui::Ui, ctx: &Context) {
+        let mut closed_modals: Vec<usize> = vec![];
+
+        for (index, modal) in self.errors.iter_mut().enumerate() {
+            modal.show(ui, ctx);
+
+            if modal.is_closed() {
+                closed_modals.push(index);
+            }
+        }
+
+        closed_modals.iter().for_each(|index| {
+            self.errors.remove(*index);
+        });
+    }
+}
+
+#[derive(Debug)]
 pub struct ModalFields {
     pub id: egui::Id,
     pub title: String,
@@ -32,7 +67,7 @@ impl ModalFields {
 }
 
 pub trait Modal: Send + Sync {
-    fn show(&mut self, ui: &egui::Ui, ctx: &mut Context) {
+    fn show(&mut self, ui: &egui::Ui, ctx: &Context) {
         if !self.is_closed() {
             let modal = egui::Modal::new(self.modal_fields().id).show(ui.ctx(), |ui| {
                 ui.set_width(self.modal_fields().width);
@@ -56,7 +91,7 @@ pub trait Modal: Send + Sync {
         !self.modal_fields().is_open
     }
 
-    fn show_content(&mut self, ui: &mut egui::Ui, ctx: &mut Context);
+    fn show_content(&mut self, ui: &mut egui::Ui, ctx: &Context);
     fn close(&mut self);
     fn modal_fields(&self) -> &ModalFields;
 }

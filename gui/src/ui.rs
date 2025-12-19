@@ -1,3 +1,4 @@
+use crate::PROJECT_TITLE;
 use crate::config::Config;
 use crate::errors::ProjectError;
 use crate::ui::app::App;
@@ -5,7 +6,6 @@ use crate::ui::app::App;
 pub struct Ui {
     min_width: f32,
     min_height: f32,
-    title: String,
 }
 
 impl Default for Ui {
@@ -13,7 +13,6 @@ impl Default for Ui {
         Self {
             min_width: 950.0,
             min_height: 550.0,
-            title: String::from("xPlagiarismChecker"),
         }
     }
 }
@@ -22,8 +21,8 @@ impl Ui {
     pub fn start(self, config: Config) -> Result<(), ProjectError> {
         let native_options = eframe::NativeOptions {
             viewport: egui::ViewportBuilder::default()
-                .with_app_id(&self.title) // Wayland requirement
-                .with_title(&self.title)
+                .with_app_id(PROJECT_TITLE) // Wayland requirement
+                .with_title(PROJECT_TITLE)
                 .with_inner_size([self.min_width, self.min_height])
                 .with_min_inner_size([self.min_width, self.min_height])
                 .with_icon(
@@ -40,7 +39,7 @@ impl Ui {
         };
 
         eframe::run_native(
-            &self.title,
+            PROJECT_TITLE,
             native_options,
             Box::new(|cc| Ok(Box::new(App::new(cc, config)))),
         )
@@ -57,9 +56,12 @@ impl Ui {
 }
 
 pub mod app;
+pub mod channel;
+pub mod commands;
 pub mod components;
 pub mod context;
 pub mod modals;
 pub mod pages;
+pub mod state;
 pub mod styles;
 pub mod themes;

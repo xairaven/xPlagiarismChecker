@@ -3,14 +3,14 @@ use crate::errors::ProjectError;
 use crate::ui::modals::{Modal, ModalFields};
 use egui::{RichText, Ui, WidgetText};
 
-#[derive(Default)]
+#[derive(Debug, Default)]
 pub struct ErrorModal {
     modal_fields: ModalFields,
     message: WidgetText,
 }
 
 impl Modal for ErrorModal {
-    fn show_content(&mut self, ui: &mut Ui, _ctx: &mut Context) {
+    fn show_content(&mut self, ui: &mut Ui, _ctx: &Context) {
         ui.label(self.message.clone());
 
         ui.add_space(16.0);

@@ -33,14 +33,23 @@ impl Localized for Language {
     }
 }
 
-pub enum Label {
+pub enum LocalizedLabel {
     NavigationMenu,
+
+    AboutDescription,
+    AboutDeveloper,
+    AboutCheckGithub,
+    AboutLatestRelease,
 }
 
-impl Localized for Label {
+impl Localized for LocalizedLabel {
     fn localize(&self) -> String {
         let tag = match self {
             Self::NavigationMenu => "Navigation.Label.Menu",
+            Self::AboutDescription => "Page.About.Description",
+            Self::AboutDeveloper => "Page.About.Developer",
+            Self::AboutCheckGithub => "Page.About.CheckGithub",
+            Self::AboutLatestRelease => "Page.About.LatestRelease",
         };
 
         t!(tag).to_string()

@@ -8,6 +8,8 @@ use crate::ui::Ui;
 // Defining folder with locales. Path: crate/locales
 rust_i18n::i18n!("locales", fallback = "en");
 
+const PROJECT_TITLE: &str = "xPlagiarismChecker";
+
 fn main() {
     let config = Config::from_file().unwrap_or_else(|error| {
         Ui::native_panic_message(error);

@@ -12,23 +12,6 @@ pub enum PageId {
     Exit,
 }
 
-impl PageId {
-    pub fn show_content(self, ui: &mut egui::Ui, ctx: &mut Context) {
-        match self {
-            Self::Main => {
-                ui.label("Main");
-            },
-            Self::Settings => {
-                ui.label("Settings");
-            },
-            Self::About => {
-                ui.label("About");
-            },
-            Self::Exit => ui.ctx().send_viewport_cmd(egui::ViewportCommand::Close),
-        }
-    }
-}
-
 impl std::fmt::Display for PageId {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let localized = self.localize();
@@ -56,9 +39,12 @@ impl Localized for PageId {
 }
 
 pub trait Page {
-    fn show_content(&mut self, ui: &mut egui::Ui, ctx: &mut Context);
+    fn show_content(&mut self, ui: &mut egui::Ui, ctx: &Context);
+    fn page_header(&self, ui: &mut egui::Ui);
     fn id(&self) -> PageId;
     fn title(&self) -> String {
         self.id().localize()
     }
 }
+
+pub mod about;

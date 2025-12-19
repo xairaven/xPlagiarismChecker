@@ -1,8 +1,9 @@
-use crate::localization::{Label, Localized};
+use crate::context::Context;
+use crate::localization::{Localized, LocalizedLabel};
+use crate::ui::commands::UiCommand;
 use crate::ui::pages::PageId;
-use crate::ui::styles::StyleSettings;
 use crate::ui::{Ui, styles};
-use egui::SidePanel;
+use egui::{Button, SidePanel};
 use std::collections::BTreeMap;
 use strum::IntoEnumIterator;
 
@@ -28,9 +29,9 @@ impl Default for Navigator {
 }
 
 impl Navigator {
-    pub fn show_content(
-        &mut self, ui: &mut egui::Ui, style: &StyleSettings, active_page: &mut PageId,
-    ) {
+    pub fn show_content(&mut self, ui: &mut egui::Ui, ctx: &Context) {
+        let style = &ctx.gui.style;
+
         SidePanel::left("navigator_panel")
             .resizable(false)
             .frame(
@@ -48,9 +49,9 @@ impl Navigator {
                 ui.with_layout(
                     egui::Layout::top_down_justified(egui::Align::Center),
                     |ui| {
-                        ui.add_space(styles::spacing::XLARGE);
+                        ui.add_space(styles::space::NAVIGATOR_HEADER);
                         ui.heading(styles::heading::huge(
-                            &Label::NavigationMenu.localize(),
+                            &LocalizedLabel::NavigationMenu.localize(),
                         ));
                         egui::warn_if_debug_build(ui);
                     },
@@ -60,10 +61,20 @@ impl Navigator {
                     egui::Layout::top_down_justified(egui::Align::Min),
                     |ui| {
                         for (tab, label) in &self.tabs {
-                            ui.selectable_value(active_page, *tab, label);
+                            let button =
+                                Button::selectable(ctx.active_page() == *tab, label);
+
+                            if ui.add(button).clicked() {
+                                self.change_tab(ctx, *tab);
+                            }
                         }
                     },
                 );
             });
+    }
+
+    fn change_tab(&self, ctx: &Context, page_id: PageId) {
+        let command = UiCommand::ChangePage(page_id);
+        ctx.gui.ui_channel.try_send(command, ctx);
     }
 }

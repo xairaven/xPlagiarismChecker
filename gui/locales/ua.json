@@ -8,6 +8,11 @@
   "Page.Title.About": "Про програму",
   "Page.Title.Exit": "Вихід",
 
+  "Page.About.Description": "Локальний інструмент виявлення плагіату для студентських програмних проектів.",
+  "Page.About.Developer": "Розробник: Ковальов Олександр",
+  "Page.About.CheckGithub": "Перегляньте код на GitHub!",
+  "Page.About.LatestRelease": "Останній реліз",
+
   "Settings.Language.English": "Англійська",
   "Settings.Language.Ukrainian": "Українська"
 }
