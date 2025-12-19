@@ -8,10 +8,10 @@ pub enum Theme {
     StandardDark,
     StandardLight,
     CarlDark,
-    #[default]
     NordDark,
     NordLight,
     TokyoNight,
+    #[default]
     TokyoNightStorm,
 }
 
