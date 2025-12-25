@@ -65,3 +65,4 @@ pub mod pages;
 pub mod state;
 pub mod styles;
 pub mod themes;
+pub mod widgets;

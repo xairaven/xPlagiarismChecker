@@ -27,9 +27,15 @@ impl Language {
 impl Localized for Language {
     fn localize(&self) -> String {
         match self {
-            Self::English => t!("Settings.Language.English").to_string(),
-            Self::Ukrainian => t!("Settings.Language.Ukrainian").to_string(),
+            Self::English => t!("Entity.Language.English").to_string(),
+            Self::Ukrainian => t!("Entity.Language.Ukrainian").to_string(),
         }
+    }
+}
+
+impl std::fmt::Display for Language {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", self.localize())
     }
 }
 
@@ -40,16 +46,28 @@ pub enum LocalizedLabel {
     AboutDeveloper,
     AboutCheckGithub,
     AboutLatestRelease,
+
+    ButtonApply,
+    ButtonSave,
+
+    SettingsAppHeader,
+    SettingsAppLanguage,
+    SettingsNoteRestartNeeded,
 }
 
 impl Localized for LocalizedLabel {
     fn localize(&self) -> String {
         let tag = match self {
-            Self::NavigationMenu => "Navigation.Label.Menu",
             Self::AboutDescription => "Page.About.Description",
             Self::AboutDeveloper => "Page.About.Developer",
             Self::AboutCheckGithub => "Page.About.CheckGithub",
             Self::AboutLatestRelease => "Page.About.LatestRelease",
+            Self::ButtonApply => "Button.Apply",
+            Self::ButtonSave => "Button.Save",
+            Self::NavigationMenu => "Navigation.Label.Menu",
+            Self::SettingsAppHeader => "Page.Settings.App.Header",
+            Self::SettingsAppLanguage => "Page.Settings.App.Label.Language",
+            Self::SettingsNoteRestartNeeded => "Page.Settings.Note.RestartNeeded",
         };
 
         t!(tag).to_string()

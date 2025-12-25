@@ -1,7 +1,4 @@
-use crate::context::Context;
-use crate::errors::ProjectError;
 use crate::ui::commands::UiCommand;
-use crate::ui::modals::error::ErrorModal;
 use crossbeam::channel::{Receiver, Sender};
 
 #[derive(Debug)]
@@ -18,13 +15,6 @@ impl Default for UiCommandChannel {
 }
 
 impl UiCommandChannel {
-    pub fn try_send(&self, command: UiCommand, ctx: &Context) {
-        if self.tx.try_send(command).is_err() {
-            let modal = ErrorModal::new(ProjectError::ChannelSend);
-            modal.try_send_by(&ctx.gui.errors_tx);
-        }
-    }
-
     pub fn try_recv(&self) -> Option<UiCommand> {
         self.rx.try_recv().ok()
     }

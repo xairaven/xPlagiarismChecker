@@ -75,6 +75,6 @@ impl Navigator {
 
     fn change_tab(&self, ctx: &Context, page_id: PageId) {
         let command = UiCommand::ChangePage(page_id);
-        ctx.gui.ui_channel.try_send(command, ctx);
+        ctx.gui.try_send_ui_command(command);
     }
 }

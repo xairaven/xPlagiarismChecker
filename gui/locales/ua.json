@@ -1,6 +1,12 @@
 {
   "_version": 1,
 
+  "Button.Apply": "Застосувати",
+  "Button.Save": "Зберегти",
+
+  "Entity.Language.English": "Англійська",
+  "Entity.Language.Ukrainian": "Українська",
+
   "Navigation.Label.Menu": "Меню",
 
   "Page.Title.Main": "Головна",
@@ -13,6 +19,9 @@
   "Page.About.CheckGithub": "Перегляньте код на GitHub!",
   "Page.About.LatestRelease": "Останній реліз",
 
-  "Settings.Language.English": "Англійська",
-  "Settings.Language.Ukrainian": "Українська"
+  "Page.Settings.Header": "Налаштування",
+  "Page.Settings.SaveConfig": "Зберегти конфігурацію",
+  "Page.Settings.App.Header": "Налаштування застосунку",
+  "Page.Settings.App.Label.Language": "Мова",
+  "Page.Settings.Note.RestartNeeded": "Зміна цього значення потребує рестарту застосунку для застосування."
 }

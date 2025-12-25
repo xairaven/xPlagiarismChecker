@@ -22,6 +22,7 @@ impl StyleSettings {
 pub mod colors {
     use egui::Color32;
 
+    pub const RED: Color32 = Color32::from_rgb(255, 0, 0);
     pub const GREEN: Color32 = Color32::from_rgb(0, 255, 0);
 }
 

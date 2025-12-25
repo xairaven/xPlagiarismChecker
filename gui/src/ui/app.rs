@@ -18,9 +18,12 @@ impl App {
     pub fn new(cc: &eframe::CreationContext<'_>, config: Config) -> Self {
         Self::set_style(&config, cc);
 
+        let context = Context::new(config);
+        let state = GuiState::new(&context);
+
         Self {
-            context: Context::new(config),
-            state: GuiState::new(),
+            context,
+            state,
 
             modals_handler: Default::default(),
             ui_command_handler: Default::default(),

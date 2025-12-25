@@ -1,9 +1,12 @@
 use crate::context::Context;
+use crate::localization::Language;
 use crate::ui::pages::PageId;
 
 #[derive(Debug, Clone)]
 pub enum UiCommand {
     ChangePage(PageId),
+    ChangeContextLanguage(Language),
+    SaveConfig,
 }
 
 #[derive(Debug, Default)]
@@ -20,6 +23,8 @@ impl UiCommandHandler {
     fn process(&mut self, command: UiCommand, ui: &mut egui::Ui, context: &mut Context) {
         match command {
             UiCommand::ChangePage(page_id) => Self::change_page(ui, context, page_id),
+            UiCommand::ChangeContextLanguage(_language) => todo!(),
+            UiCommand::SaveConfig => todo!(),
         }
     }
 

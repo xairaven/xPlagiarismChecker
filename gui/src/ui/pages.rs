@@ -48,3 +48,4 @@ pub trait Page {
 }
 
 pub mod about;
+pub mod settings;
