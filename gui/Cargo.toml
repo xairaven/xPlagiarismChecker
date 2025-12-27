@@ -12,6 +12,10 @@ readme = "../README.md"
 license = "MIT"
 repository = "https://github.com/xairaven/xPlagiarismChecker"
 
+[[bin]]
+name = "xPlagiarismChecker"
+path = "src/main.rs"
+
 [lints]
 workspace = true
 
