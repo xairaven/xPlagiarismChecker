@@ -2,8 +2,11 @@ use egui_aesthetix::Aesthetix;
 use serde::{Deserialize, Serialize};
 use std::fmt::Display;
 use std::sync::Arc;
+use strum::EnumIter;
 
-#[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(
+    Debug, Default, Clone, Copy, PartialEq, Eq, Serialize, Deserialize, EnumIter,
+)]
 pub enum Theme {
     StandardDark,
     StandardLight,

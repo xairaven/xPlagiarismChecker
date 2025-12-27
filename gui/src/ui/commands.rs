@@ -1,11 +1,13 @@
 use crate::context::Context;
 use crate::localization::Language;
 use crate::ui::pages::PageId;
+use crate::ui::themes::Theme;
 
 #[derive(Debug, Clone)]
 pub enum UiCommand {
     ChangePage(PageId),
     ChangeContextLanguage(Language),
+    ChangeTheme(Theme),
     SaveConfig,
 }
 
@@ -24,6 +26,7 @@ impl UiCommandHandler {
         match command {
             UiCommand::ChangePage(page_id) => Self::change_page(ui, context, page_id),
             UiCommand::ChangeContextLanguage(_language) => todo!(),
+            UiCommand::ChangeTheme(_theme) => todo!(),
             UiCommand::SaveConfig => todo!(),
         }
     }

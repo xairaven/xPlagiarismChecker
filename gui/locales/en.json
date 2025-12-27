@@ -23,5 +23,6 @@
   "Page.Settings.SaveConfig": "Save Configuration",
   "Page.Settings.App.Header": "Application Settings",
   "Page.Settings.App.Label.Language": "Language",
+  "Page.Settings.App.Label.Theme": "Theme",
   "Page.Settings.Note.RestartNeeded": "Changing this setting requires an application restart to take effect."
 }

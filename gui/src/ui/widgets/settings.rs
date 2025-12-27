@@ -109,6 +109,8 @@ pub struct SettingsCommon<V> {
     takes_effect_after_restart: bool,
     commands_on_save: Vec<OnSaveClosure<V>>,
     state: SettingState,
+
+    widget_id: i16,
 }
 
 impl<V> Default for SettingsCommon<V> {
@@ -119,6 +121,8 @@ impl<V> Default for SettingsCommon<V> {
             commands_on_save: vec![],
 
             state: Default::default(),
+
+            widget_id: rand::random::<i16>(),
         }
     }
 }
@@ -172,7 +176,7 @@ where
         self.render_label(ui);
 
         ui.with_layout(egui::Layout::top_down(egui::Align::Min), |ui| {
-            egui::ComboBox::from_label("")
+            egui::ComboBox::from_id_salt(self.common.widget_id)
                 .selected_text(self.current.to_string())
                 .show_ui(ui, |ui| {
                     for value in &self.possible_values {

@@ -23,5 +23,6 @@
   "Page.Settings.SaveConfig": "Зберегти конфігурацію",
   "Page.Settings.App.Header": "Налаштування застосунку",
   "Page.Settings.App.Label.Language": "Мова",
+  "Page.Settings.App.Label.Theme": "Тема",
   "Page.Settings.Note.RestartNeeded": "Зміна цього значення потребує рестарту застосунку для застосування."
 }
