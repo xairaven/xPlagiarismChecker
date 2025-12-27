@@ -1,24 +1,3 @@
-use crate::ui::themes::Theme;
-use egui_aesthetix::Aesthetix;
-use std::sync::Arc;
-
-#[derive(Debug)]
-pub struct StyleSettings {
-    pub theme: Arc<dyn Aesthetix>,
-}
-
-impl StyleSettings {
-    pub fn new(theme: Theme) -> Self {
-        Self {
-            theme: theme.into_aesthetix_theme(),
-        }
-    }
-
-    pub fn set_theme(&mut self, theme: Theme) {
-        self.theme = theme.into_aesthetix_theme();
-    }
-}
-
 pub mod colors {
     use egui::Color32;
 

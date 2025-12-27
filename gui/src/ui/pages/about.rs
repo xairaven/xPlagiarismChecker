@@ -34,14 +34,14 @@ impl Page for AboutPage {
     fn show_content(&mut self, ui: &mut egui::Ui, ctx: &Context) {
         self.page_header(ui);
 
-        let style = &ctx.gui.style;
+        let theme = ctx.settings.theme.get_converted();
 
         ui.add_space(ui.ctx().content_rect().height() / 5.0);
         ui.vertical_centered_justified(|ui| {
             ui.add(egui::Label::new(
                 RichText::new(format!("{} v{}", PROJECT_TITLE, self.version))
                     .size(styles::heading::XLARGE)
-                    .color(style.theme.fg_success_text_color_visuals()),
+                    .color(theme.fg_success_text_color_visuals()),
             ));
             ui.label(LocalizedLabel::AboutDescription.localize());
 

@@ -30,18 +30,15 @@ impl Default for Navigator {
 
 impl Navigator {
     pub fn show_content(&mut self, ui: &mut egui::Ui, ctx: &Context) {
-        let style = &ctx.gui.style;
+        let theme = ctx.settings.theme.get_converted();
 
         SidePanel::left("navigator_panel")
             .resizable(false)
             .frame(
                 egui::Frame::new()
-                    .fill(style.theme.bg_secondary_color_visuals())
-                    .inner_margin(style.theme.margin_style())
-                    .stroke(egui::Stroke::new(
-                        1.0,
-                        style.theme.bg_secondary_color_visuals(),
-                    )),
+                    .fill(theme.bg_secondary_color_visuals())
+                    .inner_margin(theme.margin_style())
+                    .stroke(egui::Stroke::new(1.0, theme.bg_secondary_color_visuals())),
             )
             .min_width(self.min_width)
             .show_separator_line(true)

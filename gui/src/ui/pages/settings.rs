@@ -16,7 +16,7 @@ impl SettingsPage {
     pub fn new(ctx: &Context) -> Self {
         Self {
             language: ComboBoxSetting::new(
-                &ctx.config.language,
+                &ctx.settings.language,
                 Language::iter().collect(),
             )
             .with_label(&LocalizedLabel::SettingsAppLanguage.localize())

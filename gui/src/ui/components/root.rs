@@ -10,12 +10,12 @@ impl Root {
         state.show_navigation(ui, context);
 
         // Central block (for pages)
-        let style = &context.gui.style;
+        let theme = context.settings.theme.get_converted();
         CentralPanel::default()
             .frame(
                 egui::Frame::new()
-                    .inner_margin(style.theme.margin_style())
-                    .fill(style.theme.bg_primary_color_visuals()),
+                    .inner_margin(theme.margin_style())
+                    .fill(theme.bg_primary_color_visuals()),
             )
             .show(ui.ctx(), |ui| {
                 state.show_active_page(ui, context);
