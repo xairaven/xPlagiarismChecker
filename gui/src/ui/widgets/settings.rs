@@ -46,43 +46,23 @@ where
         }
     }
 
-    fn apply_button(&self, new_value: &V, ui: &mut egui::Ui, ctx: &Context) {
-        if ui
-            .add_enabled(
-                !self.common().state.is_applied,
-                Button::new(LocalizedLabel::ButtonApply.localize()),
-            )
-            .clicked()
-        {
-            for command_closure in &self.common().commands_on_save {
-                let command = command_closure.0(new_value);
-                ctx.gui.try_send_ui_command(command);
-            }
-        }
-    }
+    fn confirm_button(&self, new_value: &V, ui: &mut egui::Ui, ctx: &Context) {
+        let label = if self.common().takes_effect_after_restart {
+            LocalizedLabel::ButtonSave.localize()
+        } else {
+            LocalizedLabel::ButtonApply.localize()
+        };
 
-    fn save_to_config_button(&self, new_value: &V, ui: &mut egui::Ui, ctx: &Context) {
-        if ui
-            .add_enabled(
-                !self.common().state.is_applied,
-                Button::new(LocalizedLabel::ButtonSave.localize()),
-            )
-            .clicked()
-        {
-            for command_closure in &self.common().commands_on_save {
-                let command = command_closure.0(new_value);
-                ctx.gui.try_send_ui_command(command);
-            }
-            ctx.gui.try_send_ui_command(UiCommand::SaveConfig);
-        }
-    }
-
-    fn save_button(&self, current: &V, ui: &mut egui::Ui, ctx: &Context) {
         ui.centered_and_justified(|ui| {
-            if self.common().takes_effect_after_restart {
-                self.save_to_config_button(current, ui, ctx);
-            } else {
-                self.apply_button(current, ui, ctx);
+            if ui
+                .add_enabled(!self.common().state.is_applied, Button::new(label))
+                .clicked()
+            {
+                for command_closure in &self.common().commands_on_save {
+                    let command = command_closure.0(new_value);
+                    ctx.gui.try_send_ui_command(command);
+                }
+                ctx.gui.try_send_ui_command(UiCommand::SaveConfig);
             }
         });
     }
@@ -205,7 +185,7 @@ where
                 });
         });
 
-        self.save_button(&self.current, ui, ctx);
+        self.confirm_button(&self.current, ui, ctx);
         self.reset_value_button(ui, context_value);
 
         ui.end_row();
@@ -266,7 +246,7 @@ where
         }
         ui.add(drag);
 
-        self.save_button(&self.current, ui, ctx);
+        self.confirm_button(&self.current, ui, ctx);
         self.reset_value_button(ui, context_value);
 
         ui.end_row();
