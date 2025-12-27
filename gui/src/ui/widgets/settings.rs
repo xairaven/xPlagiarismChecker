@@ -62,6 +62,7 @@ where
                     let command = command_closure.0(new_value);
                     ctx.gui.ui_channel.try_send(command);
                 }
+                ctx.gui.ui_channel.try_send(UiCommand::SynchronizeConfig);
                 ctx.gui.ui_channel.try_send(UiCommand::SaveConfig);
             }
         });

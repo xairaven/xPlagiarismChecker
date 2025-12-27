@@ -19,6 +19,13 @@ impl From<&Config> for Settings {
     }
 }
 
+impl Settings {
+    pub fn update_config(&self, config: &mut Config) {
+        config.language = self.language;
+        config.theme = self.theme.get_preference();
+    }
+}
+
 #[derive(Debug)]
 pub struct ThemeSettings {
     pub preference: Theme,

@@ -24,4 +24,8 @@ impl Context {
     pub fn active_page(&self) -> PageId {
         self.gui.active_page
     }
+
+    pub fn synchronize_config(&mut self) {
+        self.settings.update_config(&mut self.config);
+    }
 }

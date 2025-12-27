@@ -10,6 +10,7 @@ pub enum UiCommand {
     ChangeContextLanguage(Language),
     ChangeTheme(Theme),
     SaveConfig,
+    SynchronizeConfig,
 }
 
 #[derive(Debug, Default)]
@@ -33,12 +34,12 @@ impl UiCommandHandler {
             UiCommand::ChangePage(page_id) => Self::change_page(ui, context, page_id),
             UiCommand::ChangeTheme(theme) => Self::change_theme(context, ui, theme),
             UiCommand::SaveConfig => Self::save_config(context),
+            UiCommand::SynchronizeConfig => Self::synchronize_config(context),
         }
     }
 
     fn change_context_language(context: &mut Context, language: Language) {
         context.settings.language = language;
-        context.config.language = language;
     }
 
     fn change_page(ui: &mut egui::Ui, context: &mut Context, page_id: PageId) {
@@ -51,7 +52,6 @@ impl UiCommandHandler {
 
     fn change_theme(context: &mut Context, ui: &mut egui::Ui, theme: Theme) {
         context.settings.theme.set(theme);
-        context.config.theme = theme;
 
         let style = theme.into_aesthetix_theme().custom_style();
         ui.ctx().set_style(style);
@@ -63,6 +63,10 @@ impl UiCommandHandler {
             log::error!("Failed to save config file: {}", e);
             context.gui.errors_channel.try_send(ErrorModal::new(e));
         }
+    }
+
+    fn synchronize_config(context: &mut Context) {
+        context.synchronize_config();
     }
 
     fn exit(ui: &mut egui::Ui) {
