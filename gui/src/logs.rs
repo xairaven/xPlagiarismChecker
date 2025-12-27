@@ -1,12 +1,17 @@
 use crate::config::Config;
 use crate::errors::ProjectError;
+use crate::localization::Localized;
 use chrono::{Datelike, Local, Timelike};
 use log::LevelFilter;
+use rust_i18n::t;
 use serde::{Deserialize, Serialize};
+use strum::EnumIter;
 use thiserror::Error;
 use utils::enum_from_mirror;
 
-#[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(
+    Debug, Default, Clone, Copy, PartialEq, Eq, Serialize, Deserialize, EnumIter,
+)]
 pub enum LogLevel {
     #[default]
     Off,
@@ -15,6 +20,27 @@ pub enum LogLevel {
     Info,
     Debug,
     Trace,
+}
+
+impl std::fmt::Display for LogLevel {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", self.localize())
+    }
+}
+
+impl Localized for LogLevel {
+    fn localize(&self) -> String {
+        let tag = match self {
+            Self::Off => "Entity.LogLevel.Off",
+            Self::Error => "Entity.LogLevel.Error",
+            Self::Warn => "Entity.LogLevel.Warn",
+            Self::Info => "Entity.LogLevel.Info",
+            Self::Debug => "Entity.LogLevel.Debug",
+            Self::Trace => "Entity.LogLevel.Trace",
+        };
+
+        t!(tag).to_string()
+    }
 }
 
 enum_from_mirror!(LogLevel, LevelFilter, {

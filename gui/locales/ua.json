@@ -7,6 +7,13 @@
   "Entity.Language.English": "Англійська",
   "Entity.Language.Ukrainian": "Українська",
 
+  "Entity.LogLevel.Off": "Викл.",
+  "Entity.LogLevel.Error": "Помилки",
+  "Entity.LogLevel.Warn": "Попередження",
+  "Entity.LogLevel.Info": "Інформація",
+  "Entity.LogLevel.Debug": "Дебаг",
+  "Entity.LogLevel.Trace": "Трейс",
+
   "Navigation.Label.Menu": "Меню",
 
   "Page.Title.Main": "Головна",
@@ -22,6 +29,7 @@
   "Page.Settings.Header": "Налаштування",
   "Page.Settings.SaveConfig": "Зберегти конфігурацію",
   "Page.Settings.App.Label.Language": "Мова",
+  "Page.Settings.App.Label.LogLevel": "Рівень логування",
   "Page.Settings.App.Label.Theme": "Тема",
   "Page.Settings.Note.RestartNeeded": "Зміна цього значення потребує рестарту застосунку для застосування."
 }

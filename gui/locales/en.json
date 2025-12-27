@@ -7,6 +7,13 @@
   "Entity.Language.English": "English",
   "Entity.Language.Ukrainian": "Ukrainian",
 
+  "Entity.LogLevel.Off": "Off",
+  "Entity.LogLevel.Error": "Error",
+  "Entity.LogLevel.Warn": "Warning",
+  "Entity.LogLevel.Info": "Info",
+  "Entity.LogLevel.Debug": "Debug",
+  "Entity.LogLevel.Trace": "Trace",
+
   "Navigation.Label.Menu": "Menu",
 
   "Page.Title.Main": "Main Page",
@@ -22,6 +29,7 @@
   "Page.Settings.Header": "Settings",
   "Page.Settings.SaveConfig": "Save Configuration",
   "Page.Settings.App.Label.Language": "Language",
+  "Page.Settings.App.Label.LogLevel": "Log Level",
   "Page.Settings.App.Label.Theme": "Theme",
   "Page.Settings.Note.RestartNeeded": "Changing this setting requires an application restart to take effect."
 }

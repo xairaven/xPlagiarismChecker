@@ -1,5 +1,6 @@
 use crate::context::Context;
 use crate::localization::Language;
+use crate::logs::LogLevel;
 use crate::ui::modals::error::ErrorModal;
 use crate::ui::pages::PageId;
 use crate::ui::themes::Theme;
@@ -7,6 +8,7 @@ use crate::ui::themes::Theme;
 #[derive(Debug, Clone)]
 pub enum UiCommand {
     ChangePage(PageId),
+    ChangeConfigLogLevel(LogLevel),
     ChangeContextLanguage(Language),
     ChangeTheme(Theme),
     SaveConfig,
@@ -31,6 +33,9 @@ impl UiCommandHandler {
             UiCommand::ChangeContextLanguage(language) => {
                 Self::change_context_language(context, language)
             },
+            UiCommand::ChangeConfigLogLevel(log_level) => {
+                Self::change_context_log_level(context, log_level)
+            },
             UiCommand::ChangePage(page_id) => Self::change_page(ui, context, page_id),
             UiCommand::ChangeTheme(theme) => Self::change_theme(context, ui, theme),
             UiCommand::SaveConfig => Self::save_config(context),
@@ -40,6 +45,10 @@ impl UiCommandHandler {
 
     fn change_context_language(context: &mut Context, language: Language) {
         context.settings.language = language;
+    }
+
+    fn change_context_log_level(context: &mut Context, log_level: LogLevel) {
+        context.config.log_level = log_level;
     }
 
     fn change_page(ui: &mut egui::Ui, context: &mut Context, page_id: PageId) {

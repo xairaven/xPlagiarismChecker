@@ -52,6 +52,7 @@ pub enum LocalizedLabel {
 
     SettingsHeader,
     SettingsAppLanguage,
+    SettingsAppLogLevel,
     SettingsAppTheme,
     SettingsNoteRestartNeeded,
 }
@@ -68,6 +69,7 @@ impl Localized for LocalizedLabel {
             Self::NavigationMenu => "Navigation.Label.Menu",
             Self::SettingsHeader => "Page.Settings.Header",
             Self::SettingsAppLanguage => "Page.Settings.App.Label.Language",
+            Self::SettingsAppLogLevel => "Page.Settings.App.Label.LogLevel",
             Self::SettingsAppTheme => "Page.Settings.App.Label.Theme",
             Self::SettingsNoteRestartNeeded => "Page.Settings.Note.RestartNeeded",
         };

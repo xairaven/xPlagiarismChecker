@@ -1,5 +1,6 @@
 use crate::context::Context;
 use crate::localization::{Language, Localized, LocalizedLabel};
+use crate::logs::LogLevel;
 use crate::ui::commands::UiCommand;
 use crate::ui::pages::{Page, PageId};
 use crate::ui::styles;
@@ -11,6 +12,7 @@ use strum::IntoEnumIterator;
 #[derive(Debug)]
 pub struct SettingsPage {
     language: ComboBoxSetting<Language>,
+    log_level: ComboBoxSetting<LogLevel>,
     theme: ComboBoxSetting<Theme>,
 }
 
@@ -24,6 +26,14 @@ impl SettingsPage {
                     UiCommand::ChangeContextLanguage(*language)
                 });
 
+        let log_level =
+            ComboBoxSetting::new(&ctx.config.log_level, LogLevel::iter().collect())
+                .with_label(&LocalizedLabel::SettingsAppLogLevel.localize())
+                .takes_effect_after_restart()
+                .send_command_on_save(|log_level: &LogLevel| {
+                    UiCommand::ChangeConfigLogLevel(*log_level)
+                });
+
         let theme = ComboBoxSetting::new(
             &ctx.settings.theme.get_preference(),
             Theme::iter().collect(),
@@ -31,7 +41,11 @@ impl SettingsPage {
         .with_label(&LocalizedLabel::SettingsAppTheme.localize())
         .send_command_on_save(|theme: &Theme| UiCommand::ChangeTheme(theme.to_owned()));
 
-        Self { language, theme }
+        Self {
+            language,
+            log_level,
+            theme,
+        }
     }
 }
 
@@ -51,6 +65,7 @@ impl Page for SettingsPage {
                 self.language.show(ui, &ctx.settings.language, ctx);
                 self.theme
                     .show(ui, &ctx.settings.theme.get_preference(), ctx);
+                self.log_level.show(ui, &ctx.config.log_level, ctx);
             });
     }
 
