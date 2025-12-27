@@ -16,6 +16,7 @@ pub struct App {
 
 impl App {
     pub fn new(cc: &eframe::CreationContext<'_>, config: Config) -> Self {
+        Self::set_fonts(cc);
         Self::set_style(&config, cc);
 
         let context = Context::new(config);
@@ -33,6 +34,12 @@ impl App {
     fn set_style(config: &Config, cc: &eframe::CreationContext<'_>) {
         let style = config.theme.into_aesthetix_theme().custom_style();
         cc.egui_ctx.set_style(style);
+    }
+
+    fn set_fonts(cc: &eframe::CreationContext<'_>) {
+        let mut fonts = egui::FontDefinitions::default();
+        egui_phosphor::add_to_fonts(&mut fonts, egui_phosphor::Variant::Regular);
+        cc.egui_ctx.set_fonts(fonts);
     }
 }
 

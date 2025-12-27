@@ -17,10 +17,14 @@ impl std::fmt::Display for PageId {
         let localized = self.localize();
 
         let text = match self {
-            Self::Main => format!("{:<5} {}", "💽", localized),
-            Self::Settings => format!("{:<5} {}", "⚙", localized),
-            Self::About => format!("{:<5} {}", "ℹ", localized),
-            Self::Exit => format!("{:<5} {}", "🗙", localized),
+            Self::Main => format!("{:<5} {}", egui_phosphor::regular::DISC, localized),
+            Self::Settings => {
+                format!("{:<5} {}", egui_phosphor::regular::GEAR, localized)
+            },
+            Self::About => format!("{:<5} {}", egui_phosphor::regular::INFO, localized),
+            Self::Exit => {
+                format!("{:<5} {}", egui_phosphor::regular::SIGN_OUT, localized)
+            },
         };
 
         write!(f, "{text}")
