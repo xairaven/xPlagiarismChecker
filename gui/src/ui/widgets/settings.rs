@@ -34,11 +34,70 @@ where
     }
 
     fn render_label(&self, ui: &mut egui::Ui) {
-        self.common().render_label(ui);
+        let mut text = RichText::new(&self.common().label).strong();
+
+        if !self.common().state.is_applied {
+            text = text.color(styles::colors::RED);
+        }
+
+        let label = ui.label(text);
+        if self.common().takes_effect_after_restart {
+            label.on_hover_text(LocalizedLabel::SettingsNoteRestartNeeded.localize());
+        }
+    }
+
+    fn apply_button(&self, new_value: &V, ui: &mut egui::Ui, ctx: &Context) {
+        if ui
+            .add_enabled(
+                !self.common().state.is_applied,
+                Button::new(LocalizedLabel::ButtonApply.localize()),
+            )
+            .clicked()
+        {
+            for command_closure in &self.common().commands_on_save {
+                let command = command_closure.0(new_value);
+                ctx.gui.try_send_ui_command(command);
+            }
+        }
+    }
+
+    fn save_to_config_button(&self, new_value: &V, ui: &mut egui::Ui, ctx: &Context) {
+        if ui
+            .add_enabled(
+                !self.common().state.is_applied,
+                Button::new(LocalizedLabel::ButtonSave.localize()),
+            )
+            .clicked()
+        {
+            for command_closure in &self.common().commands_on_save {
+                let command = command_closure.0(new_value);
+                ctx.gui.try_send_ui_command(command);
+            }
+            ctx.gui.try_send_ui_command(UiCommand::SaveConfig);
+        }
+    }
+
+    fn save_button(&self, current: &V, ui: &mut egui::Ui, ctx: &Context) {
+        if self.common().takes_effect_after_restart {
+            self.save_to_config_button(current, ui, ctx);
+        } else {
+            self.apply_button(current, ui, ctx);
+        }
+    }
+
+    fn reset_value_button(&mut self, ui: &mut egui::Ui, context_value: &V) {
+        if ui
+            .add_enabled(!self.common().state.is_applied, Button::new("🔙"))
+            .clicked()
+        {
+            let current_value = self.current_value_mut();
+            *current_value = context_value.clone();
+        }
     }
 
     fn common(&self) -> &SettingsCommon<V>;
     fn common_mut(&mut self) -> &mut SettingsCommon<V>;
+    fn current_value_mut(&mut self) -> &mut V;
 }
 
 pub struct OnSaveClosure<V>(Box<dyn Fn(&V) -> UiCommand>);
@@ -85,69 +144,6 @@ where
     fn update_state(&mut self, current_value: &V, context_value: &V) {
         self.state.check_is_applied(current_value, context_value);
     }
-
-    fn render_label(&self, ui: &mut egui::Ui) {
-        let mut text = RichText::new(&self.label).strong();
-
-        if !self.state.is_applied {
-            text = text.color(styles::colors::RED);
-        }
-
-        let label = ui.label(text);
-        if self.takes_effect_after_restart {
-            label.on_hover_text(LocalizedLabel::SettingsNoteRestartNeeded.localize());
-        }
-    }
-
-    fn apply_button(&self, new_value: &V, ui: &mut egui::Ui, ctx: &Context) {
-        if ui
-            .add_enabled(
-                !self.state.is_applied,
-                Button::new(LocalizedLabel::ButtonApply.localize()),
-            )
-            .clicked()
-        {
-            for command_closure in &self.commands_on_save {
-                let command = command_closure.0(new_value);
-                ctx.gui.try_send_ui_command(command);
-            }
-        }
-    }
-
-    fn save_to_config_button(&self, new_value: &V, ui: &mut egui::Ui, ctx: &Context) {
-        if ui
-            .add_enabled(
-                !self.state.is_applied,
-                Button::new(LocalizedLabel::ButtonSave.localize()),
-            )
-            .clicked()
-        {
-            for command_closure in &self.commands_on_save {
-                let command = command_closure.0(new_value);
-                ctx.gui.try_send_ui_command(command);
-            }
-            ctx.gui.try_send_ui_command(UiCommand::SaveConfig);
-        }
-    }
-
-    fn save_button(&self, current: &V, ui: &mut egui::Ui, ctx: &Context) {
-        if self.takes_effect_after_restart {
-            self.save_to_config_button(current, ui, ctx);
-        } else {
-            self.apply_button(current, ui, ctx);
-        }
-    }
-
-    fn reset_value_button(
-        &self, ui: &mut egui::Ui, current_value: &mut V, context_value: &V,
-    ) {
-        if ui
-            .add_enabled(!self.state.is_applied, Button::new("🔙"))
-            .clicked()
-        {
-            *current_value = context_value.clone();
-        }
-    }
 }
 
 #[derive(Debug)]
@@ -191,6 +187,9 @@ where
     fn common_mut(&mut self) -> &mut SettingsCommon<V> {
         &mut self.common
     }
+    fn current_value_mut(&mut self) -> &mut V {
+        &mut self.current
+    }
 }
 
 impl<V> ComboBoxSetting<V>
@@ -224,9 +223,8 @@ where
                 });
         });
 
-        self.common.save_button(&self.current, ui, ctx);
-        self.common
-            .reset_value_button(ui, &mut self.current, context_value);
+        self.save_button(&self.current, ui, ctx);
+        self.reset_value_button(ui, context_value);
 
         ui.end_row();
     }
@@ -254,6 +252,9 @@ where
 
     fn common_mut(&mut self) -> &mut SettingsCommon<V> {
         &mut self.common
+    }
+    fn current_value_mut(&mut self) -> &mut V {
+        &mut self.current
     }
 }
 
@@ -289,9 +290,8 @@ where
         }
         ui.add(drag);
 
-        self.common.save_button(&self.current, ui, ctx);
-        self.common
-            .reset_value_button(ui, &mut self.current, context_value);
+        self.save_button(&self.current, ui, ctx);
+        self.reset_value_button(ui, context_value);
 
         ui.end_row();
     }
