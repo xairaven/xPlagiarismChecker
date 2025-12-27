@@ -95,6 +95,8 @@ where
         }
     }
 
+    fn show(&mut self, ui: &mut egui::Ui, context_value: &V, ctx: &Context);
+
     fn common(&self) -> &SettingsCommon<V>;
     fn common_mut(&mut self) -> &mut SettingsCommon<V>;
     fn current_value_mut(&mut self) -> &mut V;
@@ -180,31 +182,7 @@ impl<V> SettingWidget<V> for ComboBoxSetting<V>
 where
     V: Clone + PartialEq + std::fmt::Display,
 {
-    fn common(&self) -> &SettingsCommon<V> {
-        &self.common
-    }
-
-    fn common_mut(&mut self) -> &mut SettingsCommon<V> {
-        &mut self.common
-    }
-    fn current_value_mut(&mut self) -> &mut V {
-        &mut self.current
-    }
-}
-
-impl<V> ComboBoxSetting<V>
-where
-    V: Clone + PartialEq + std::fmt::Display,
-{
-    pub fn new(value: &V, possible_values: Vec<V>) -> Self {
-        Self {
-            common: Default::default(),
-            current: value.clone(),
-            possible_values,
-        }
-    }
-
-    pub fn show(&mut self, ui: &mut egui::Ui, context_value: &V, ctx: &Context) {
+    fn show(&mut self, ui: &mut egui::Ui, context_value: &V, ctx: &Context) {
         self.common.update_state(&self.current, context_value);
 
         self.render_label(ui);
@@ -228,6 +206,30 @@ where
 
         ui.end_row();
     }
+
+    fn common(&self) -> &SettingsCommon<V> {
+        &self.common
+    }
+
+    fn common_mut(&mut self) -> &mut SettingsCommon<V> {
+        &mut self.common
+    }
+    fn current_value_mut(&mut self) -> &mut V {
+        &mut self.current
+    }
+}
+
+impl<V> ComboBoxSetting<V>
+where
+    V: Clone + PartialEq + std::fmt::Display,
+{
+    pub fn new(value: &V, possible_values: Vec<V>) -> Self {
+        Self {
+            common: Default::default(),
+            current: value.clone(),
+            possible_values,
+        }
+    }
 }
 
 #[derive(Debug)]
@@ -244,8 +246,28 @@ where
 
 impl<V> SettingWidget<V> for DragValueSetting<V>
 where
-    V: Clone + PartialEq + egui::emath::Numeric,
+    V: Clone + PartialEq + egui::emath::Numeric + Into<f64>,
 {
+    fn show(&mut self, ui: &mut egui::Ui, context_value: &V, ctx: &Context) {
+        self.common.update_state(&self.current, context_value);
+
+        self.render_label(ui);
+
+        let mut drag = DragValue::new(&mut self.current).range(self.range.clone());
+        if let Some(step) = &self.step {
+            drag = drag.speed(*step);
+        }
+        if let Some(suffix) = &self.suffix {
+            drag = drag.suffix(suffix.clone());
+        }
+        ui.add(drag);
+
+        self.save_button(&self.current, ui, ctx);
+        self.reset_value_button(ui, context_value);
+
+        ui.end_row();
+    }
+
     fn common(&self) -> &SettingsCommon<V> {
         &self.common
     }
@@ -274,25 +296,5 @@ where
             step,
             suffix,
         }
-    }
-
-    fn show(&mut self, ui: &mut egui::Ui, context_value: &V, ctx: &Context) {
-        self.common.update_state(&self.current, context_value);
-
-        self.render_label(ui);
-
-        let mut drag = DragValue::new(&mut self.current).range(self.range.clone());
-        if let Some(step) = &self.step {
-            drag = drag.speed(*step);
-        }
-        if let Some(suffix) = &self.suffix {
-            drag = drag.suffix(suffix.clone());
-        }
-        ui.add(drag);
-
-        self.save_button(&self.current, ui, ctx);
-        self.reset_value_button(ui, context_value);
-
-        ui.end_row();
     }
 }
