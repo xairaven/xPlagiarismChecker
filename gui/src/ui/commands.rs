@@ -9,7 +9,7 @@ use crate::ui::themes::Theme;
 pub enum UiCommand {
     ChangePage(PageId),
     ChangeConfigLogLevel(LogLevel),
-    ChangeContextLanguage(Language),
+    ChangeConfigLanguage(Language),
     ChangeTheme(Theme),
     SaveConfig,
     SynchronizeConfig,
@@ -30,11 +30,11 @@ impl UiCommandHandler {
         &mut self, command: UiCommand, ui: &mut egui::Ui, context: &mut Context,
     ) {
         match command {
-            UiCommand::ChangeContextLanguage(language) => {
-                Self::change_context_language(context, language)
+            UiCommand::ChangeConfigLanguage(language) => {
+                Self::change_config_language(context, language)
             },
             UiCommand::ChangeConfigLogLevel(log_level) => {
-                Self::change_context_log_level(context, log_level)
+                Self::change_config_log_level(context, log_level)
             },
             UiCommand::ChangePage(page_id) => Self::change_page(ui, context, page_id),
             UiCommand::ChangeTheme(theme) => Self::change_theme(context, ui, theme),
@@ -43,11 +43,11 @@ impl UiCommandHandler {
         }
     }
 
-    fn change_context_language(context: &mut Context, language: Language) {
-        context.settings.language = language;
+    fn change_config_language(context: &mut Context, language: Language) {
+        context.config.language = language;
     }
 
-    fn change_context_log_level(context: &mut Context, log_level: LogLevel) {
+    fn change_config_log_level(context: &mut Context, log_level: LogLevel) {
         context.config.log_level = log_level;
     }
 

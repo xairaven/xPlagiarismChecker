@@ -37,5 +37,4 @@ mod errors;
 mod io;
 mod localization;
 mod logs;
-mod settings;
 mod ui;

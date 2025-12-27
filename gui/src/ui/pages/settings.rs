@@ -19,11 +19,11 @@ pub struct SettingsPage {
 impl SettingsPage {
     pub fn new(ctx: &Context) -> Self {
         let language =
-            ComboBoxSetting::new(&ctx.settings.language, Language::iter().collect())
+            ComboBoxSetting::new(&ctx.config.language, Language::iter().collect())
                 .with_label(&LocalizedLabel::SettingsAppLanguage.localize())
                 .takes_effect_after_restart()
                 .send_command_on_save(|language: &Language| {
-                    UiCommand::ChangeContextLanguage(*language)
+                    UiCommand::ChangeConfigLanguage(*language)
                 });
 
         let log_level =
@@ -62,7 +62,7 @@ impl Page for SettingsPage {
             .max_col_width(COLUMN_WIDTH)
             .min_col_width(COLUMN_WIDTH)
             .show(ui, |ui| {
-                self.language.show(ui, &ctx.settings.language, ctx);
+                self.language.show(ui, &ctx.config.language, ctx);
                 self.theme
                     .show(ui, &ctx.settings.theme.get_preference(), ctx);
                 self.log_level.show(ui, &ctx.config.log_level, ctx);
