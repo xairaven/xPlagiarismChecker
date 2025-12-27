@@ -41,7 +41,7 @@ impl Page for SettingsPage {
 
         self.page_header(ui);
 
-        ui.heading(LocalizedLabel::SettingsAppHeader.localize());
+        ui.heading(LocalizedLabel::SettingsHeader.localize());
         Grid::new("app_settings")
             .num_columns(4)
             .striped(false)

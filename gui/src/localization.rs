@@ -50,7 +50,7 @@ pub enum LocalizedLabel {
     ButtonApply,
     ButtonSave,
 
-    SettingsAppHeader,
+    SettingsHeader,
     SettingsAppLanguage,
     SettingsAppTheme,
     SettingsNoteRestartNeeded,
@@ -66,7 +66,7 @@ impl Localized for LocalizedLabel {
             Self::ButtonApply => "Button.Apply",
             Self::ButtonSave => "Button.Save",
             Self::NavigationMenu => "Navigation.Label.Menu",
-            Self::SettingsAppHeader => "Page.Settings.App.Header",
+            Self::SettingsHeader => "Page.Settings.Header",
             Self::SettingsAppLanguage => "Page.Settings.App.Label.Language",
             Self::SettingsAppTheme => "Page.Settings.App.Label.Theme",
             Self::SettingsNoteRestartNeeded => "Page.Settings.Note.RestartNeeded",
