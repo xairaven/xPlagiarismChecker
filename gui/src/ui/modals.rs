@@ -9,7 +9,7 @@ pub struct ModalsHandler {
 impl ModalsHandler {
     pub fn handle_errors(&mut self, ui: &mut egui::Ui, ctx: &Context) {
         // Getting modals from the channels (in context).
-        if let Ok(modal) = ctx.gui.errors_rx.try_recv() {
+        if let Some(modal) = ctx.gui.errors_channel.try_recv() {
             self.errors.push(modal);
         }
 

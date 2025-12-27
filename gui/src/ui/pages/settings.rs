@@ -21,7 +21,7 @@ impl SettingsPage {
                 .with_label(&LocalizedLabel::SettingsAppLanguage.localize())
                 .takes_effect_after_restart()
                 .send_command_on_save(|language: &Language| {
-                    UiCommand::ChangeContextLanguage(language.clone())
+                    UiCommand::ChangeContextLanguage(*language)
                 });
 
         let theme = ComboBoxSetting::new(

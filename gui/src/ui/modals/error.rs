@@ -40,10 +40,4 @@ impl ErrorModal {
             message: RichText::new(error.to_string()).into(),
         }
     }
-
-    pub fn try_send_by(self, tx: &crossbeam::channel::Sender<Self>) {
-        if let Err(err) = tx.try_send(self) {
-            log::error!("Failed to send modal: {err}");
-        }
-    }
 }

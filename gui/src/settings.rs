@@ -13,7 +13,7 @@ pub struct Settings {
 impl From<&Config> for Settings {
     fn from(config: &Config) -> Self {
         Self {
-            language: config.language.clone(),
+            language: config.language,
             theme: ThemeSettings::new(config.theme),
         }
     }
@@ -42,9 +42,11 @@ impl ThemeSettings {
     }
 
     pub fn set(&mut self, new_theme: Theme) {
-        if self.preference != new_theme {
-            self.preference = new_theme;
-            self.aesthetix = new_theme.into_aesthetix_theme();
+        if self.preference == new_theme {
+            return;
         }
+
+        self.preference = new_theme;
+        self.aesthetix = new_theme.into_aesthetix_theme();
     }
 }

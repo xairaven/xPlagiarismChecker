@@ -12,7 +12,4 @@ pub enum ProjectError {
 
     #[error("Logging. {0}")]
     LogError(#[from] LogError),
-
-    #[error("Failed to send command through channel.")]
-    ChannelSend,
 }

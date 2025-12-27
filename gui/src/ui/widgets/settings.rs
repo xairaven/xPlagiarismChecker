@@ -60,9 +60,9 @@ where
             {
                 for command_closure in &self.common().commands_on_save {
                     let command = command_closure.0(new_value);
-                    ctx.gui.try_send_ui_command(command);
+                    ctx.gui.ui_channel.try_send(command);
                 }
-                ctx.gui.try_send_ui_command(UiCommand::SaveConfig);
+                ctx.gui.ui_channel.try_send(UiCommand::SaveConfig);
             }
         });
     }

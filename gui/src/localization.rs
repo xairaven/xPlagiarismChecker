@@ -6,7 +6,7 @@ pub trait Localized {
     fn localize(&self) -> String;
 }
 
-#[derive(Debug, Default, Clone, EnumIter, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Default, Copy, Clone, EnumIter, PartialEq, Serialize, Deserialize)]
 pub enum Language {
     #[default]
     English,
