@@ -18,4 +18,4 @@ workspace = true
 [dependencies]
 strum = { version = "0.27.2", features = ["derive"] }
 thiserror = "2.0.17"
-zip = "6.0.0"
+zip = "7.0.0"
