@@ -27,6 +27,7 @@ crossbeam = "0.8.4"
 directories = "6.0.0"
 egui = "0.33.3"
 egui-aesthetix = { git = "https://github.com/xairaven/egui-aesthetix.git", features = ["all_themes"]}
+egui-phosphor = "0.11"
 eframe = { version = "0.33.3", default-features = false, features = [
     "default_fonts",
     "glow",
