@@ -63,9 +63,9 @@ impl Page for SettingsPage {
             .min_col_width(COLUMN_WIDTH)
             .show(ui, |ui| {
                 self.language.show(ui, &ctx.config.language, ctx);
+                self.log_level.show(ui, &ctx.config.log_level, ctx);
                 self.theme
                     .show(ui, &ctx.settings.theme.get_preference(), ctx);
-                self.log_level.show(ui, &ctx.config.log_level, ctx);
             });
     }
 
