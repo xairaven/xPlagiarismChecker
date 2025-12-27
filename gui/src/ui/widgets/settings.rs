@@ -12,7 +12,7 @@ where
     where
         Self: Sized,
     {
-        self.common_mut().label = label.to_string();
+        self.common_mut().label = format!("{}:", label);
         self
     }
 
@@ -78,21 +78,25 @@ where
     }
 
     fn save_button(&self, current: &V, ui: &mut egui::Ui, ctx: &Context) {
-        if self.common().takes_effect_after_restart {
-            self.save_to_config_button(current, ui, ctx);
-        } else {
-            self.apply_button(current, ui, ctx);
-        }
+        ui.centered_and_justified(|ui| {
+            if self.common().takes_effect_after_restart {
+                self.save_to_config_button(current, ui, ctx);
+            } else {
+                self.apply_button(current, ui, ctx);
+            }
+        });
     }
 
     fn reset_value_button(&mut self, ui: &mut egui::Ui, context_value: &V) {
-        if ui
-            .add_enabled(!self.common().state.is_applied, Button::new("🔙"))
-            .clicked()
-        {
-            let current_value = self.current_value_mut();
-            *current_value = context_value.clone();
-        }
+        ui.centered_and_justified(|ui| {
+            if ui
+                .add_enabled(!self.common().state.is_applied, Button::new("🔙"))
+                .clicked()
+            {
+                let current_value = self.current_value_mut();
+                *current_value = context_value.clone();
+            }
+        });
     }
 
     fn show(&mut self, ui: &mut egui::Ui, context_value: &V, ctx: &Context);
