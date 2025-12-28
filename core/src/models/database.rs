@@ -1,3 +1,4 @@
+use crate::algorithm::file::FileNamePattern;
 use crate::errors::LibError;
 use crate::io::IoError;
 use crate::models::submission::Submission;
@@ -16,7 +17,13 @@ pub struct Database {
 
     pub is_dirty: bool,
     pub meta: DatabaseMetadata,
+    pub settings: DatabaseSettings,
     pub submissions: Vec<Submission>,
+}
+
+#[derive(Debug, Default)]
+pub struct DatabaseSettings {
+    pub file_name_pattern: FileNamePattern,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -39,11 +46,15 @@ impl DatabaseMetadata {
 }
 
 impl Database {
-    pub fn new(name: String, description: Option<String>, path: PathBuf) -> Self {
+    pub fn new(
+        name: String, description: Option<String>, settings: DatabaseSettings,
+        path: PathBuf,
+    ) -> Self {
         Self {
             file_path: path,
             is_dirty: true,
             meta: DatabaseMetadata::new(name, description),
+            settings,
             submissions: vec![],
         }
     }
