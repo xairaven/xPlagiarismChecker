@@ -9,6 +9,7 @@ use zip::write::SimpleFileOptions;
 
 pub const FILE_EXTENSION: &str = "xai";
 pub const META_FILE_NAME: &str = "meta.json";
+pub const SETTINGS_FILE_NAME: &str = "settings.json";
 pub const SUBMISSIONS_DIR: &str = "submissions";
 
 #[derive(Debug)]
@@ -21,7 +22,7 @@ pub struct Database {
     pub submissions: Vec<Submission>,
 }
 
-#[derive(Debug, Default)]
+#[derive(Debug, Default, Serialize, Deserialize)]
 pub struct DatabaseSettings {
     pub file_name_pattern: FileNamePattern,
 }
@@ -67,15 +68,23 @@ impl Database {
             .compression_method(zip::CompressionMethod::Deflated)
             .unix_permissions(0o755);
 
+        // Metadata file
         zip.start_file(META_FILE_NAME, options)
             .map_err(LibError::Zip)?;
-
         let meta_json =
             serde_json::to_string_pretty(&self.meta).map_err(LibError::Json)?;
-
         zip.write_all(meta_json.as_bytes())
             .map_err(IoError::Write)?;
 
+        // Settings file
+        zip.start_file(SETTINGS_FILE_NAME, options)
+            .map_err(LibError::Zip)?;
+        let settings_json =
+            serde_json::to_string_pretty(&self.settings).map_err(LibError::Json)?;
+        zip.write_all(settings_json.as_bytes())
+            .map_err(IoError::Write)?;
+
+        // Submissions
         for submission in &self.submissions {
             let mut directory_path =
                 format!("{}/{}", SUBMISSIONS_DIR, submission.metadata.student_name);
