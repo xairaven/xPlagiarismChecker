@@ -16,6 +16,7 @@ repository = "https://github.com/xairaven/xPlagiarismChecker"
 workspace = true
 
 [dependencies]
+log = "0.4.29"
 serde = { version = "1.0.228", features = ["derive"] }
 serde_json = "1.0.148"
 strum = { version = "0.27.2", features = ["derive"] }
