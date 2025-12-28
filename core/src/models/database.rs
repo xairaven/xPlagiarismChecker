@@ -153,8 +153,8 @@ impl Database {
             let parts: Vec<&str> = path_str.split('/').collect();
 
             // Ignore files not following the pattern
-            if parts.len() <= 4
-                || (parts.len() <= 3
+            if parts.len() < 4
+                || (parts.len() < 3
                     && matches!(settings.file_name_pattern, FileNamePattern::StudentOnly))
             {
                 continue;
