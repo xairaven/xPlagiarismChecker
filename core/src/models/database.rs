@@ -1,5 +1,6 @@
 use crate::errors::LibError;
 use crate::io::IoError;
+use crate::models::ignore::IgnoreList;
 use crate::models::pattern::FileNamePattern;
 use crate::models::submission::{CodeFile, Submission, SubmissionMetadata};
 use serde::{Deserialize, Serialize};
@@ -27,6 +28,7 @@ pub struct Database {
 #[derive(Debug, Default, Serialize, Deserialize)]
 pub struct DatabaseSettings {
     pub file_name_pattern: FileNamePattern,
+    pub ignore_list: IgnoreList,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
