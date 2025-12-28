@@ -1,10 +1,12 @@
-use crate::algorithm::file::FileNamePattern;
 use crate::errors::LibError;
 use crate::io::IoError;
-use crate::models::submission::Submission;
+use crate::models::pattern::FileNamePattern;
+use crate::models::submission::{CodeFile, Submission, SubmissionMetadata};
 use serde::{Deserialize, Serialize};
-use std::io::Write;
-use std::path::PathBuf;
+use std::collections::HashMap;
+use std::io::{Read, Write};
+use std::path::{Path, PathBuf};
+use thiserror::Error;
 use zip::write::SimpleFileOptions;
 
 pub const FILE_EXTENSION: &str = "xai";
@@ -61,7 +63,7 @@ impl Database {
     }
 
     pub fn save(&mut self) -> Result<(), LibError> {
-        let file = std::fs::File::create(&self.file_path).map_err(IoError::CreateFile)?;
+        let file = std::fs::File::create(&self.file_path).map_err(IoError::Create)?;
         let mut zip = zip::ZipWriter::new(file);
 
         let options = SimpleFileOptions::default()
@@ -106,4 +108,151 @@ impl Database {
 
         Ok(())
     }
+
+    pub fn load(path: &Path) -> Result<Self, LibError> {
+        let file = std::fs::File::open(path).map_err(IoError::Open)?;
+        let mut archive = zip::ZipArchive::new(file).map_err(LibError::Zip)?;
+
+        // Reading Metadata
+        let meta: DatabaseMetadata = {
+            let mut file = archive
+                .by_name(META_FILE_NAME)
+                .map_err(|_| DatabaseError::MissingMetadata)?;
+            let mut content = String::new();
+            file.read_to_string(&mut content).map_err(IoError::Read)?;
+            serde_json::from_str(&content).map_err(LibError::Json)?
+        };
+
+        // Reading Settings
+        let settings: DatabaseSettings = {
+            match archive.by_name(SETTINGS_FILE_NAME) {
+                Ok(mut file) => {
+                    let mut content = String::new();
+                    file.read_to_string(&mut content).map_err(IoError::Read)?;
+                    serde_json::from_str(&content).map_err(LibError::Json)?
+                },
+                Err(_) => DatabaseSettings::default(),
+            }
+        };
+
+        // Reading Submissions
+        // Grouping files by (student, assignment)
+        let mut grouped_files: HashMap<(String, Option<String>), Vec<CodeFile>> =
+            HashMap::new();
+
+        for i in 0..archive.len() {
+            let mut file = archive.by_index(i).map_err(LibError::Zip)?;
+
+            // Skipping directories
+            if file.is_dir() {
+                continue;
+            }
+
+            // Parsing path: submissions/Ivanov/Lab1/src/main.rs
+            let path_str = file.name().to_string();
+            let parts: Vec<&str> = path_str.split('/').collect();
+
+            // Ignore files not following the pattern
+            if parts.len() <= 4
+                || (parts.len() <= 3
+                    && matches!(settings.file_name_pattern, FileNamePattern::StudentOnly))
+            {
+                continue;
+            }
+
+            // Extracting student, assignment (if applicable), and relative path based on pattern
+            let (student, assignment, relative_path) = match &settings.file_name_pattern {
+                FileNamePattern::StudentTask { .. } => {
+                    match &parts[..] {
+                        [SUBMISSIONS_DIR, student, assignment, rest @ ..] => (
+                            student.to_string(),
+                            Some(assignment.to_string()),
+                            rest.iter().map(|s| s.to_string()).collect::<Vec<String>>(),
+                        ),
+                        _ => continue, // Files outside submissions directory are ignored
+                    }
+                },
+                FileNamePattern::TaskStudent { .. } => {
+                    match &parts[..] {
+                        [SUBMISSIONS_DIR, assignment, student, rest @ ..] => (
+                            student.to_string(),
+                            Some(assignment.to_string()),
+                            rest.iter().map(|s| s.to_string()).collect(),
+                        ),
+                        _ => continue, // Files outside submissions directory are ignored
+                    }
+                },
+                FileNamePattern::StudentOnly => {
+                    match &parts[..] {
+                        [SUBMISSIONS_DIR, student, rest @ ..] => (
+                            student.to_string(),
+                            None,
+                            rest.iter().map(|s| s.to_string()).collect(),
+                        ),
+                        _ => continue, // Files outside submissions directory are ignored
+                    }
+                },
+            };
+            let relative_path = relative_path.join("/");
+
+            // Reading content (safe for UTF-8)
+            let mut buffer = Vec::new();
+            file.read_to_end(&mut buffer).map_err(IoError::Read)?;
+            let content = match String::from_utf8(buffer) {
+                Ok(content) => content,
+                Err(error) => {
+                    log::warn!(
+                        "File '{}' contains invalid UTF-8 and will be skipped. Error: {}",
+                        path_str,
+                        error
+                    );
+                    continue;
+                },
+            };
+
+            let code_file = CodeFile {
+                relative_path,
+                content,
+                extension: Path::new(&path_str)
+                    .extension()
+                    .and_then(|s| s.to_str())
+                    .unwrap_or("")
+                    .to_string(),
+            };
+
+            grouped_files
+                .entry((student, assignment))
+                .or_default()
+                .push(code_file);
+        }
+
+        // Converting grouped files into submissions
+        let submissions: Vec<Submission> = grouped_files
+            .into_iter()
+            .map(|((student_name, assignment_title), files)| Submission {
+                metadata: SubmissionMetadata {
+                    student_name,
+                    assignment_title,
+                },
+                files,
+            })
+            .collect();
+
+        Ok(Self {
+            file_path: path.to_path_buf(),
+            is_dirty: false,
+            meta,
+            settings,
+            submissions,
+        })
+    }
+}
+
+#[derive(Debug, Error)]
+pub enum DatabaseError {
+    #[error("Filename does not match the expected pattern: {0}")]
+    InvalidPattern(String),
+
+    #[error("Database is missing required metadata.")]
+    MissingMetadata,
 }

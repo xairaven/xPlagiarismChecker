@@ -2,11 +2,8 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Submission {
-    // Unique identifier for the student
-    pub id: String,
     pub metadata: SubmissionMetadata,
     pub files: Vec<CodeFile>,
-    pub timestamp: i64,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]

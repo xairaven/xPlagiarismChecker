@@ -1,6 +1,6 @@
+use crate::models::database::DatabaseError;
 use crate::models::submission::SubmissionMetadata;
 use serde::{Deserialize, Serialize};
-use thiserror::Error;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub enum FileNamePattern {
@@ -24,12 +24,12 @@ impl Default for FileNamePattern {
 impl SubmissionMetadata {
     pub fn parse(
         filename: &str, pattern: &FileNamePattern,
-    ) -> Result<Self, FileNameParseError> {
+    ) -> Result<Self, DatabaseError> {
         match pattern {
             FileNamePattern::StudentTask { separator } => {
                 let (student, task) = filename
                     .split_once(*separator)
-                    .ok_or(FileNameParseError::InvalidFormat(filename.to_string()))?;
+                    .ok_or(DatabaseError::InvalidPattern(filename.to_string()))?;
 
                 Ok(SubmissionMetadata {
                     student_name: student.to_string(),
@@ -39,7 +39,7 @@ impl SubmissionMetadata {
             FileNamePattern::TaskStudent { separator } => {
                 let (task, student) = filename
                     .split_once(*separator)
-                    .ok_or(FileNameParseError::InvalidFormat(filename.to_string()))?;
+                    .ok_or(DatabaseError::InvalidPattern(filename.to_string()))?;
 
                 Ok(SubmissionMetadata {
                     student_name: student.to_string(),
@@ -52,10 +52,4 @@ impl SubmissionMetadata {
             }),
         }
     }
-}
-
-#[derive(Debug, Error)]
-pub enum FileNameParseError {
-    #[error("Filename does not match the expected pattern: {0}")]
-    InvalidFormat(String),
 }

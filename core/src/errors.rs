@@ -1,5 +1,5 @@
-use crate::algorithm::file::FileNameParseError;
 use crate::io::IoError;
+use crate::models::database::DatabaseError;
 use thiserror::Error;
 
 #[derive(Debug, Error)]
@@ -13,6 +13,6 @@ pub enum LibError {
     #[error("JSON. {0}")]
     Json(#[from] serde_json::error::Error),
 
-    #[error("Filename Parse. {0}")]
-    FileNameParse(#[from] FileNameParseError),
+    #[error("Database. {0}")]
+    Database(#[from] DatabaseError),
 }
