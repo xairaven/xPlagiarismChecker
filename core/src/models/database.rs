@@ -63,7 +63,9 @@ impl Database {
     }
 
     pub fn save(&mut self) -> Result<(), LibError> {
-        let file = std::fs::File::create(&self.file_path).map_err(IoError::Create)?;
+        // Creating temporary file and writing data
+        let tmp_path = self.file_path.with_extension("tmp");
+        let file = std::fs::File::create(&tmp_path).map_err(IoError::Create)?;
         let mut zip = zip::ZipWriter::new(file);
 
         let options = SimpleFileOptions::default()
@@ -88,11 +90,15 @@ impl Database {
 
         // Submissions
         for submission in &self.submissions {
-            let mut directory_path =
-                format!("{}/{}", SUBMISSIONS_DIR, submission.metadata.student_name);
+            // Forming the path manually using '/'
+            let mut path_parts = vec![
+                SUBMISSIONS_DIR.to_string(),
+                submission.metadata.student_name.clone(),
+            ];
             if let Some(title) = &submission.metadata.assignment_title {
-                directory_path.push_str(&format!("/{}", title));
+                path_parts.push(title.clone());
             }
+            let directory_path = path_parts.join("/");
 
             for code_file in &submission.files {
                 let file_path = format!("{}/{}", directory_path, code_file.relative_path);
@@ -103,6 +109,13 @@ impl Database {
         }
 
         zip.finish().map_err(LibError::Zip)?;
+
+        // Safe file replacement (.tmp -> original)
+        // Only replace the old file if writing was successful
+        std::fs::rename(&tmp_path, &self.file_path).map_err(|e| {
+            let _ = std::fs::remove_file(&tmp_path);
+            IoError::Write(e)
+        })?;
 
         self.is_dirty = false;
 
