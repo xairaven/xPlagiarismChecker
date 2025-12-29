@@ -153,6 +153,14 @@ impl FileLoader {
             match compress_tools::uncompress_archive_file(&file, &mut buffer, &entry_name)
             {
                 Ok(_) => {
+                    // Filter 2: Binary Check (Safety Net)
+                    // If the file contains null bytes, it's likely binary (exe, png, etc.)
+                    // even if it has a valid extension (e.g. accidental rename).
+                    if buffer.contains(&0) {
+                        log::warn!("Ignored file (binary detected): {}", path.display());
+                        continue;
+                    }
+
                     let content = String::from_utf8_lossy(&buffer).to_string();
 
                     code_files.push(CodeFile {
@@ -214,6 +222,12 @@ impl FileLoader {
 
             // Read content
             if let Ok(content_bytes) = std::fs::read(path) {
+                // Filter 2: Binary Check
+                if content_bytes.contains(&0) {
+                    log::warn!("Ignored file (binary detected): {}", path.display());
+                    continue;
+                }
+
                 let content = String::from_utf8_lossy(&content_bytes).to_string();
 
                 code_files.push(CodeFile {
