@@ -257,13 +257,13 @@ impl FileLoader {
         // 2. Whitelist Check (Extensions)
         if let Some(extension) = path.extension().and_then(|s| s.to_str()) {
             let extension = extension.to_lowercase();
-            return !settings
+            return settings
                 .ignore_list
                 .accepted_extensions
                 .contains(&extension);
         }
 
-        true
+        false
     }
 }
 
