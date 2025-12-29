@@ -6,7 +6,7 @@ use strum::EnumIter;
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, EnumIter)]
 pub enum PageId {
     #[default]
-    Main,
+    Database,
     Settings,
     About,
     Exit,
@@ -17,7 +17,9 @@ impl std::fmt::Display for PageId {
         let localized = self.localize();
 
         let text = match self {
-            Self::Main => format!("{:<5} {}", egui_phosphor::regular::DISC, localized),
+            Self::Database => {
+                format!("{:<5} {}", egui_phosphor::regular::DATABASE, localized)
+            },
             Self::Settings => {
                 format!("{:<5} {}", egui_phosphor::regular::GEAR, localized)
             },
@@ -34,7 +36,7 @@ impl std::fmt::Display for PageId {
 impl Localized for PageId {
     fn localize(&self) -> String {
         match self {
-            Self::Main => t!("Page.Title.Main").to_string(),
+            Self::Database => t!("Page.Title.Database").to_string(),
             Self::Settings => t!("Page.Title.Settings").to_string(),
             Self::About => t!("Page.Title.About").to_string(),
             Self::Exit => t!("Page.Title.Exit").to_string(),

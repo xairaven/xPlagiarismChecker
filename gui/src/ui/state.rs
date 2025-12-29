@@ -27,7 +27,7 @@ impl<'a> GuiState {
 
     pub fn show_active_page(&mut self, ui: &mut egui::Ui, ctx: &Context) {
         match ctx.gui.active_page {
-            PageId::Main => {
+            PageId::Database => {
                 ui.label("Main");
             },
             PageId::Settings => self.settings.show_content(ui, ctx),
