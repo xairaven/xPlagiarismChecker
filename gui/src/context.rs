@@ -1,3 +1,4 @@
+use crate::algorithm::AlgorithmContext;
 use crate::config::Config;
 use crate::ui::context::GuiContext;
 use crate::ui::pages::PageId;
@@ -7,6 +8,7 @@ use std::sync::Arc;
 
 #[derive(Debug)]
 pub struct Context {
+    pub algorithm: AlgorithmContext,
     pub gui: GuiContext,
     pub settings: RuntimeSettings,
 
@@ -17,6 +19,7 @@ pub struct Context {
 impl Context {
     pub fn new(config: Config) -> Self {
         Self {
+            algorithm: Default::default(),
             gui: GuiContext::new(&config),
             settings: RuntimeSettings::from(&config),
             config,

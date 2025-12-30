@@ -31,6 +31,7 @@ fn main() {
     });
 }
 
+mod algorithm;
 mod config;
 mod context;
 mod errors;
