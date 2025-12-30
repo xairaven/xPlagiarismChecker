@@ -1,8 +1,9 @@
 use crate::context::Context;
-use crate::localization::{Localized, LocalizedLabel};
+use crate::localization::LocalizedLabel;
 use crate::ui::commands::UiCommand;
 use crate::ui::styles;
 use egui::{Button, DragValue, RichText};
+use rust_i18n_derive::Localized;
 
 pub trait SettingWidget<V>
 where
@@ -42,7 +43,7 @@ where
 
         let label = ui.label(text);
         if self.common().takes_effect_after_restart {
-            label.on_hover_text(LocalizedLabel::SettingsNoteRestartNeeded.localize());
+            label.on_hover_text(LocalizedLabel::PageSettingsNoteRestartNeeded.localize());
         }
     }
 

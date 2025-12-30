@@ -1,15 +1,16 @@
-use rust_i18n::t;
+use egui::WidgetText;
+use rust_i18n_derive::Localized;
 use serde::{Deserialize, Serialize};
 use strum::EnumIter;
 
-pub trait Localized {
-    fn localize(&self) -> String;
-}
-
-#[derive(Debug, Default, Copy, Clone, EnumIter, PartialEq, Serialize, Deserialize)]
+#[derive(
+    Debug, Default, Copy, Clone, EnumIter, Localized, PartialEq, Serialize, Deserialize,
+)]
 pub enum Language {
     #[default]
+    #[tag("Entity.Language.English")]
     English,
+    #[tag("Entity.Language.Ukrainian")]
     Ukrainian,
 }
 
@@ -24,56 +25,42 @@ impl Language {
     }
 }
 
-impl Localized for Language {
-    fn localize(&self) -> String {
-        match self {
-            Self::English => t!("Entity.Language.English").to_string(),
-            Self::Ukrainian => t!("Entity.Language.Ukrainian").to_string(),
-        }
-    }
-}
-
 impl std::fmt::Display for Language {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "{}", self.localize())
     }
 }
 
+#[derive(Localized)]
 pub enum LocalizedLabel {
-    NavigationMenu,
-
-    AboutDescription,
-    AboutDeveloper,
-    AboutCheckGithub,
-    AboutLatestRelease,
-
+    #[tag("Page.About.Description")]
+    PageAboutDescription,
+    #[tag("Page.About.Developer")]
+    PageAboutDeveloper,
+    #[tag("Page.About.CheckGithub")]
+    PageAboutCheckGithub,
+    #[tag("Page.About.LatestRelease")]
+    PageAboutLatestRelease,
+    #[tag("Button.Apply")]
     ButtonApply,
+    #[tag("Button.Save")]
     ButtonSave,
-
-    SettingsHeader,
-    SettingsAppLanguage,
-    SettingsAppLogLevel,
-    SettingsAppTheme,
-    SettingsNoteRestartNeeded,
+    #[tag("Navigation.Label.Menu")]
+    NavigationLabelMenu,
+    #[tag("Page.Settings.Header")]
+    PageSettingsHeader,
+    #[tag("Page.Settings.App.Label.Language")]
+    PageSettingsAppLabelLanguage,
+    #[tag("Page.Settings.App.Label.LogLevel")]
+    PageSettingsAppLabelLogLevel,
+    #[tag("Page.Settings.App.Label.Theme")]
+    PageSettingsAppLabelTheme,
+    #[tag("Page.Settings.Note.RestartNeeded")]
+    PageSettingsNoteRestartNeeded,
 }
 
-impl Localized for LocalizedLabel {
-    fn localize(&self) -> String {
-        let tag = match self {
-            Self::AboutDescription => "Page.About.Description",
-            Self::AboutDeveloper => "Page.About.Developer",
-            Self::AboutCheckGithub => "Page.About.CheckGithub",
-            Self::AboutLatestRelease => "Page.About.LatestRelease",
-            Self::ButtonApply => "Button.Apply",
-            Self::ButtonSave => "Button.Save",
-            Self::NavigationMenu => "Navigation.Label.Menu",
-            Self::SettingsHeader => "Page.Settings.Header",
-            Self::SettingsAppLanguage => "Page.Settings.App.Label.Language",
-            Self::SettingsAppLogLevel => "Page.Settings.App.Label.LogLevel",
-            Self::SettingsAppTheme => "Page.Settings.App.Label.Theme",
-            Self::SettingsNoteRestartNeeded => "Page.Settings.Note.RestartNeeded",
-        };
-
-        t!(tag).to_string()
+impl From<LocalizedLabel> for WidgetText {
+    fn from(val: LocalizedLabel) -> Self {
+        WidgetText::from(val.localize())
     }
 }

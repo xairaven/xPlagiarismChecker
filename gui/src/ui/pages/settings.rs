@@ -1,5 +1,5 @@
 use crate::context::Context;
-use crate::localization::{Language, Localized, LocalizedLabel};
+use crate::localization::{Language, LocalizedLabel};
 use crate::logs::LogLevel;
 use crate::ui::commands::UiCommand;
 use crate::ui::pages::{Page, PageId};
@@ -7,6 +7,7 @@ use crate::ui::styles;
 use crate::ui::themes::Theme;
 use crate::ui::widgets::settings::{ComboBoxSetting, SettingWidget};
 use egui::Grid;
+use rust_i18n_derive::Localized;
 use strum::IntoEnumIterator;
 
 #[derive(Debug)]
@@ -20,7 +21,7 @@ impl SettingsPage {
     pub fn new(ctx: &Context) -> Self {
         let language =
             ComboBoxSetting::new(&ctx.config.language, Language::iter().collect())
-                .with_label(&LocalizedLabel::SettingsAppLanguage.localize())
+                .with_label(&LocalizedLabel::PageSettingsAppLabelLanguage.localize())
                 .takes_effect_after_restart()
                 .send_command_on_save(|language: &Language| {
                     UiCommand::ChangeConfigLanguage(*language)
@@ -28,7 +29,7 @@ impl SettingsPage {
 
         let log_level =
             ComboBoxSetting::new(&ctx.config.log_level, LogLevel::iter().collect())
-                .with_label(&LocalizedLabel::SettingsAppLogLevel.localize())
+                .with_label(&LocalizedLabel::PageSettingsAppLabelLogLevel.localize())
                 .takes_effect_after_restart()
                 .send_command_on_save(|log_level: &LogLevel| {
                     UiCommand::ChangeConfigLogLevel(*log_level)
@@ -38,7 +39,7 @@ impl SettingsPage {
             &ctx.settings.theme.get_preference(),
             Theme::iter().collect(),
         )
-        .with_label(&LocalizedLabel::SettingsAppTheme.localize())
+        .with_label(&LocalizedLabel::PageSettingsAppLabelTheme.localize())
         .send_command_on_save(|theme: &Theme| UiCommand::ChangeTheme(theme.to_owned()));
 
         Self {
@@ -55,7 +56,7 @@ impl Page for SettingsPage {
 
         self.page_header(ui);
 
-        ui.heading(LocalizedLabel::SettingsHeader.localize());
+        ui.heading(LocalizedLabel::PageSettingsHeader.localize());
         Grid::new("app_settings")
             .num_columns(4)
             .striped(false)

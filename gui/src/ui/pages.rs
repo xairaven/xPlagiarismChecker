@@ -1,14 +1,19 @@
 use crate::context::Context;
-use crate::localization::Localized;
-use rust_i18n::t;
+use rust_i18n_derive::Localized;
 use strum::EnumIter;
 
-#[derive(Debug, Default, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, EnumIter)]
+#[derive(
+    Debug, Default, Clone, Copy, Localized, PartialEq, Eq, PartialOrd, Ord, EnumIter,
+)]
 pub enum PageId {
     #[default]
+    #[tag("Page.Title.Database")]
     Database,
+    #[tag("Page.Title.Settings")]
     Settings,
+    #[tag("Page.Title.About")]
     About,
+    #[tag("Page.Title.Exit")]
     Exit,
 }
 
@@ -33,22 +38,11 @@ impl std::fmt::Display for PageId {
     }
 }
 
-impl Localized for PageId {
-    fn localize(&self) -> String {
-        match self {
-            Self::Database => t!("Page.Title.Database").to_string(),
-            Self::Settings => t!("Page.Title.Settings").to_string(),
-            Self::About => t!("Page.Title.About").to_string(),
-            Self::Exit => t!("Page.Title.Exit").to_string(),
-        }
-    }
-}
-
 pub trait Page {
     fn show_content(&mut self, ui: &mut egui::Ui, ctx: &Context);
     fn page_header(&self, ui: &mut egui::Ui);
     fn id(&self) -> PageId;
-    fn title(&self) -> String {
+    fn title(&self) -> std::borrow::Cow<'static, str> {
         self.id().localize()
     }
 }

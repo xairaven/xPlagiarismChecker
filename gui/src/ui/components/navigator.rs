@@ -1,9 +1,10 @@
 use crate::context::Context;
-use crate::localization::{Localized, LocalizedLabel};
+use crate::localization::LocalizedLabel;
 use crate::ui::commands::UiCommand;
 use crate::ui::pages::PageId;
 use crate::ui::{Ui, styles};
 use egui::{Button, SidePanel};
+use rust_i18n_derive::Localized;
 use std::collections::BTreeMap;
 use strum::IntoEnumIterator;
 
@@ -48,7 +49,7 @@ impl Navigator {
                     |ui| {
                         ui.add_space(styles::space::NAVIGATOR_HEADER);
                         ui.heading(styles::heading::huge(
-                            &LocalizedLabel::NavigationMenu.localize(),
+                            &LocalizedLabel::NavigationLabelMenu.localize(),
                         ));
                         egui::warn_if_debug_build(ui);
                     },

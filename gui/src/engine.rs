@@ -1,6 +1,6 @@
 use engine::Database;
 
 #[derive(Debug, Default)]
-pub struct AlgorithmContext {
+pub struct EngineContext {
     pub database: Option<Database>,
 }

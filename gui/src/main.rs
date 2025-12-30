@@ -31,9 +31,9 @@ fn main() {
     });
 }
 
-mod algorithm;
 mod config;
 mod context;
+mod engine;
 mod errors;
 mod io;
 mod localization;
