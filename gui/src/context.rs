@@ -1,5 +1,5 @@
 use crate::config::Config;
-use crate::engine::EngineContext;
+use crate::session::Session;
 use crate::ui::context::GuiContext;
 use crate::ui::pages::PageId;
 use crate::ui::themes::Theme;
@@ -8,8 +8,8 @@ use std::sync::Arc;
 
 #[derive(Debug)]
 pub struct Context {
-    pub engine: EngineContext,
     pub gui: GuiContext,
+    pub session: Session,
     pub settings: RuntimeSettings,
 
     // Used for saving into config file
@@ -19,8 +19,8 @@ pub struct Context {
 impl Context {
     pub fn new(config: Config) -> Self {
         Self {
-            engine: Default::default(),
             gui: GuiContext::new(&config),
+            session: Session::default(),
             settings: RuntimeSettings::from(&config),
             config,
         }

@@ -1,6 +1,6 @@
 use engine::Database;
 
 #[derive(Debug, Default)]
-pub struct EngineContext {
+pub struct Session {
     pub database: Option<Database>,
 }

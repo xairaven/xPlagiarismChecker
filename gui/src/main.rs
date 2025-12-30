@@ -33,9 +33,9 @@ fn main() {
 
 mod config;
 mod context;
-mod engine;
 mod errors;
 mod io;
 mod localization;
 mod logs;
+mod session;
 mod ui;
