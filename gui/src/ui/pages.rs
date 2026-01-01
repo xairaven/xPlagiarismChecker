@@ -1,4 +1,5 @@
 use crate::context::Context;
+use crate::ui::styles;
 use rust_i18n_derive::Localized;
 use strum::EnumIter;
 
@@ -40,12 +41,11 @@ impl std::fmt::Display for PageId {
 
 pub trait Page {
     fn show_content(&mut self, ui: &mut egui::Ui, ctx: &Context);
-    fn page_header(&self, ui: &mut egui::Ui);
-    fn id(&self) -> PageId;
-    fn title(&self) -> std::borrow::Cow<'static, str> {
-        self.id().localize()
+    fn page_header(&self, ui: &mut egui::Ui) {
+        ui.add_space(styles::space::PAGE_HEADER);
     }
 }
 
 pub mod about;
+pub mod database;
 pub mod settings;

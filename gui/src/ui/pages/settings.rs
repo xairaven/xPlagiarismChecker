@@ -2,7 +2,7 @@ use crate::context::Context;
 use crate::localization::{Language, LocalizedLabel};
 use crate::logs::LogLevel;
 use crate::ui::commands::UiCommand;
-use crate::ui::pages::{Page, PageId};
+use crate::ui::pages::Page;
 use crate::ui::styles;
 use crate::ui::themes::Theme;
 use crate::ui::widgets::settings::{ComboBoxSetting, SettingWidget};
@@ -72,9 +72,5 @@ impl Page for SettingsPage {
 
     fn page_header(&self, ui: &mut egui::Ui) {
         ui.add_space(styles::space::PAGE_HEADER);
-    }
-
-    fn id(&self) -> PageId {
-        PageId::Settings
     }
 }

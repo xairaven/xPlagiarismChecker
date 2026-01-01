@@ -1,7 +1,7 @@
 use crate::PROJECT_TITLE;
 use crate::context::Context;
 use crate::localization::LocalizedLabel;
-use crate::ui::pages::{Page, PageId};
+use crate::ui::pages::Page;
 use crate::ui::styles;
 use egui::RichText;
 use rust_i18n_derive::Localized;
@@ -75,9 +75,5 @@ impl Page for AboutPage {
 
     fn page_header(&self, ui: &mut egui::Ui) {
         ui.add_space(styles::space::PAGE_HEADER);
-    }
-
-    fn id(&self) -> PageId {
-        PageId::About
     }
 }
