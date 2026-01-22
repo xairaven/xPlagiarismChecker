@@ -2,11 +2,11 @@ use crate::config::Config;
 use crate::errors::ProjectError;
 use chrono::{Datelike, Local, Timelike};
 use log::LevelFilter;
+use o2o::o2o;
 use rust_i18n_derive::Localized;
 use serde::{Deserialize, Serialize};
 use strum::EnumIter;
 use thiserror::Error;
-use utils::enum_from_mirror;
 
 #[derive(
     Debug,
@@ -19,7 +19,9 @@ use utils::enum_from_mirror;
     Serialize,
     Deserialize,
     EnumIter,
+    o2o,
 )]
+#[o2o(map_owned(log::LevelFilter))]
 pub enum LogLevel {
     #[default]
     #[tag("Entity.LogLevel.Off")]
@@ -41,15 +43,6 @@ impl std::fmt::Display for LogLevel {
         write!(f, "{}", self.localize())
     }
 }
-
-enum_from_mirror!(LogLevel, LevelFilter, {
-    Off,
-    Error,
-    Warn,
-    Info,
-    Debug,
-    Trace,
-});
 
 pub struct Logger {
     log_level: LevelFilter,

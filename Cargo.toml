@@ -1,7 +1,7 @@
 [workspace]
 resolver = "2"
 
-members = ["engine", "gui", "utils"]
+members = ["engine", "gui"]
 
 [profile.release]
 lto = true
