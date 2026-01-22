@@ -1,8 +1,7 @@
 use crate::context::Context;
 use crate::localization::LocalizedLabel;
 use crate::ui::commands::UiCommand;
-use crate::ui::styles;
-use egui::{Button, DragValue, RichText};
+use egui::{Button, Color32, DragValue, RichText};
 use rust_i18n_derive::Localized;
 
 pub trait SettingWidget<V>
@@ -38,7 +37,7 @@ where
         let mut text = RichText::new(&self.common().label).strong();
 
         if !self.common().state.is_applied {
-            text = text.color(styles::colors::RED);
+            text = text.color(Color32::RED);
         }
 
         let label = ui.label(text);

@@ -3,7 +3,7 @@ use crate::context::Context;
 use crate::localization::LocalizedLabel;
 use crate::ui::pages::Page;
 use crate::ui::styles;
-use egui::RichText;
+use egui::{Color32, RichText};
 use rust_i18n_derive::Localized;
 
 const GITHUB_REPO_LINK: &str = "https://github.com/xairaven/xPlagiarismChecker";
@@ -54,7 +54,7 @@ impl Page for AboutPage {
 
             let gh_repo_hyperlink = egui::Hyperlink::from_label_and_url(
                 RichText::new(LocalizedLabel::PageAboutCheckGithub.localize())
-                    .color(styles::colors::GREEN)
+                    .color(Color32::GREEN)
                     .underline(),
                 GITHUB_REPO_LINK,
             );
@@ -65,7 +65,7 @@ impl Page for AboutPage {
                     "*{}*",
                     LocalizedLabel::PageAboutLatestRelease.localize()
                 ))
-                .color(styles::colors::GREEN)
+                .color(Color32::GREEN)
                 .underline(),
                 GITHUB_RELEASES_LINK,
             );
