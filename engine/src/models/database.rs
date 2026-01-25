@@ -36,7 +36,6 @@ pub struct DatabaseMetadata {
     pub id: String,
     pub name: String,
     pub description: Option<String>,
-    pub version: i16,
 }
 
 impl DatabaseMetadata {
@@ -45,7 +44,6 @@ impl DatabaseMetadata {
             id: uuid::Uuid::new_v4().to_string(),
             name,
             description,
-            version: 1,
         }
     }
 }
