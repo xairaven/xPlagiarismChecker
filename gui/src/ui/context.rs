@@ -1,4 +1,4 @@
-use crate::config::Config;
+use crate::files::config::Config;
 use crate::ui::channel::Channel;
 use crate::ui::commands::UiCommand;
 use crate::ui::modals::error::ErrorModal;

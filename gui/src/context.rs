@@ -1,4 +1,6 @@
-use crate::config::Config;
+use crate::files::AppFiles;
+use crate::files::config::Config;
+use crate::files::ignore::IgnoreSettings;
 use crate::session::Session;
 use crate::ui::context::GuiContext;
 use crate::ui::pages::PageId;
@@ -17,12 +19,12 @@ pub struct Context {
 }
 
 impl Context {
-    pub fn new(config: Config) -> Self {
+    pub fn new(app_files: AppFiles) -> Self {
         Self {
-            gui: GuiContext::new(&config),
+            gui: GuiContext::new(&app_files.config),
             session: Session::default(),
-            settings: RuntimeSettings::from(&config),
-            config,
+            settings: RuntimeSettings::from(&app_files),
+            config: app_files.config,
         }
     }
 
@@ -38,12 +40,14 @@ impl Context {
 #[derive(Debug)]
 pub struct RuntimeSettings {
     pub theme: ThemeSettings,
+    pub ignore_settings: IgnoreSettings,
 }
 
-impl From<&Config> for RuntimeSettings {
-    fn from(config: &Config) -> Self {
+impl From<&AppFiles> for RuntimeSettings {
+    fn from(app_files: &AppFiles) -> Self {
         Self {
-            theme: ThemeSettings::new(config.theme),
+            theme: ThemeSettings::new(app_files.config.theme),
+            ignore_settings: app_files.ignore.clone(),
         }
     }
 }

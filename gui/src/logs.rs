@@ -1,5 +1,6 @@
-use crate::config::Config;
 use crate::errors::ProjectError;
+use crate::files::FileType;
+use crate::files::config::Config;
 use chrono::{Datelike, Local, Timelike};
 use log::LevelFilter;
 use o2o::o2o;
@@ -48,6 +49,8 @@ pub struct Logger {
     log_level: LevelFilter,
 }
 
+const LOG_FILE_TYPE: FileType = FileType::Logs;
+
 impl Logger {
     pub fn from_config(config: &Config) -> Self {
         Self {
@@ -60,9 +63,7 @@ impl Logger {
             return Ok(());
         }
 
-        let file_name = Self::generate_file_name();
-        let path = Self::path(file_name)?;
-
+        let path = LOG_FILE_TYPE.path()?;
         let file = fern::log_file(path).map_err(LogError::IO)?;
 
         fern::Dispatch::new()
@@ -85,18 +86,6 @@ impl Logger {
             .map_err(LogError::SetLoggerError)
             .map_err(ProjectError::LogError)
     }
-
-    fn generate_file_name() -> String {
-        let now = Local::now();
-        let date = format!(
-            "{year:04}-{day:02}-{month:02}",
-            year = now.year(),
-            day = now.day(),
-            month = now.month(),
-        );
-
-        format!("{date}.log")
-    }
 }
 
 #[derive(Debug, Error)]
@@ -106,10 +95,4 @@ pub enum LogError {
 
     #[error("Set Logger: {0}")]
     SetLoggerError(#[from] log::SetLoggerError),
-
-    #[error("Failed to get current directory: {0}")]
-    CurrentDirectory(std::io::Error),
-
-    #[error("Failed to create log directory: {0}")]
-    LogDirectory(std::io::Error),
 }

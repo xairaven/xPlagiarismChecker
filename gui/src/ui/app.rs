@@ -1,5 +1,6 @@
-use crate::config::Config;
 use crate::context::Context;
+use crate::files::AppFiles;
+use crate::files::config::Config;
 use crate::ui::commands::UiCommandHandler;
 use crate::ui::components::root::Root;
 use crate::ui::modals::ModalsHandler;
@@ -15,11 +16,11 @@ pub struct App {
 }
 
 impl App {
-    pub fn new(cc: &eframe::CreationContext<'_>, config: Config) -> Self {
+    pub fn new(cc: &eframe::CreationContext<'_>, app_files: AppFiles) -> Self {
         Self::set_fonts(cc);
-        Self::set_style(&config, cc);
+        Self::set_style(&app_files.config, cc);
 
-        let context = Context::new(config);
+        let context = Context::new(app_files);
         let state = GuiState::new(&context);
 
         Self {

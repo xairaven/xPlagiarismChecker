@@ -1,6 +1,6 @@
 use crate::PROJECT_TITLE;
-use crate::config::Config;
 use crate::errors::ProjectError;
+use crate::files::AppFiles;
 use crate::ui::app::App;
 
 pub struct Ui {
@@ -18,7 +18,7 @@ impl Default for Ui {
 }
 
 impl Ui {
-    pub fn start(self, config: Config) -> Result<(), ProjectError> {
+    pub fn start(self, app_files: AppFiles) -> Result<(), ProjectError> {
         let native_options = eframe::NativeOptions {
             viewport: egui::ViewportBuilder::default()
                 .with_app_id(PROJECT_TITLE) // Wayland requirement
@@ -41,7 +41,7 @@ impl Ui {
         eframe::run_native(
             PROJECT_TITLE,
             native_options,
-            Box::new(|cc| Ok(Box::new(App::new(cc, config)))),
+            Box::new(|cc| Ok(Box::new(App::new(cc, app_files)))),
         )
         .map_err(ProjectError::EFrame)
     }
