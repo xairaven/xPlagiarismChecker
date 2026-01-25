@@ -24,6 +24,9 @@ pub enum IoError {
     #[error("Failed to create parent directories. {0}")]
     CreateParentDirectories(std::io::Error),
 
+    #[error("Failed to open file. {0}")]
+    Open(std::io::Error),
+
     #[error("Failed to write content into file. {0}")]
     Write(std::io::Error),
 }

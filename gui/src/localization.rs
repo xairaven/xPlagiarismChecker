@@ -49,6 +49,10 @@ pub enum LocalizedLabel {
     NavigationLabelMenu,
     #[tag("Page.Settings.Header")]
     PageSettingsHeader,
+    #[tag("Page.Settings.App.Label.Ignore.Directories")]
+    PageSettingsAppLabelIgnoredDirectories,
+    #[tag("Page.Settings.App.Label.Ignore.Extensions")]
+    PageSettingsAppLabelAcceptedExtensions,
     #[tag("Page.Settings.App.Label.Language")]
     PageSettingsAppLabelLanguage,
     #[tag("Page.Settings.App.Label.LogLevel")]

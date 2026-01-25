@@ -1,4 +1,7 @@
 use crate::context::Context;
+use crate::errors::{IoError, ProjectError};
+use crate::files::FileType;
+use crate::files::ignore::IgnoreSettings;
 use crate::localization::Language;
 use crate::logs::LogLevel;
 use crate::ui::modals::error::ErrorModal;
@@ -11,6 +14,9 @@ pub enum UiCommand {
     ChangeConfigLogLevel(LogLevel),
     ChangeConfigLanguage(Language),
     ChangeTheme(Theme),
+    OpenAcceptedExtensionsFile,
+    OpenIgnoredDirectoriesFile,
+    ReloadIgnored,
     SaveConfig,
     SynchronizeConfig,
 }
@@ -38,6 +44,13 @@ impl UiCommandHandler {
             },
             UiCommand::ChangePage(page_id) => Self::change_page(ui, context, page_id),
             UiCommand::ChangeTheme(theme) => Self::change_theme(context, ui, theme),
+            UiCommand::OpenAcceptedExtensionsFile => {
+                Self::open_accepted_extensions_file(context)
+            },
+            UiCommand::OpenIgnoredDirectoriesFile => {
+                Self::open_ignored_directories_file(context)
+            },
+            UiCommand::ReloadIgnored => Self::reload_ignored(context),
             UiCommand::SaveConfig => Self::save_config(context),
             UiCommand::SynchronizeConfig => Self::synchronize_config(context),
         }
@@ -64,6 +77,42 @@ impl UiCommandHandler {
 
         let style = theme.into_aesthetix_theme().custom_style();
         ui.ctx().set_style(style);
+    }
+
+    fn open_accepted_extensions_file(context: &mut Context) {
+        let path = match FileType::AcceptedExtensions.path() {
+            Ok(path) => path,
+            Err(_) => return,
+        };
+        if let Err(error) = open::that(path) {
+            log::error!("Failed to open \"Accepted Extensions\" file: {}", error);
+            let error = ProjectError::Io(IoError::Open(error));
+            context.gui.errors_channel.try_send(ErrorModal::new(error));
+        }
+    }
+
+    fn open_ignored_directories_file(context: &mut Context) {
+        let path = match FileType::IgnoredDirectories.path() {
+            Ok(path) => path,
+            Err(_) => return,
+        };
+        if let Err(error) = open::that(path) {
+            log::error!("Failed to open \"Ignored Directories\" file: {}", error);
+            let error = ProjectError::Io(IoError::Open(error));
+            context.gui.errors_channel.try_send(ErrorModal::new(error));
+        }
+    }
+
+    fn reload_ignored(context: &mut Context) {
+        let ignore_settings = match IgnoreSettings::from_file() {
+            Ok(value) => value,
+            Err(error) => {
+                log::error!("Failed to reload \"Ignore list\": {}", error);
+                context.gui.errors_channel.try_send(ErrorModal::new(error));
+                return;
+            },
+        };
+        context.settings.ignore_settings = ignore_settings;
     }
 
     fn save_config(context: &mut Context) {

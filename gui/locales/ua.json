@@ -28,6 +28,8 @@
 
   "Page.Settings.Header": "Налаштування",
   "Page.Settings.SaveConfig": "Зберегти конфігурацію",
+  "Page.Settings.App.Label.Ignore.Directories": "Ігноровані каталоги",
+  "Page.Settings.App.Label.Ignore.Extensions": "Дозволені розширення",
   "Page.Settings.App.Label.Language": "Мова",
   "Page.Settings.App.Label.LogLevel": "Рівень логування",
   "Page.Settings.App.Label.Theme": "Тема",

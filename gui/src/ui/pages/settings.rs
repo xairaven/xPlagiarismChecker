@@ -67,10 +67,48 @@ impl Page for SettingsPage {
                 self.log_level.show(ui, &ctx.config.log_level, ctx);
                 self.theme
                     .show(ui, &ctx.settings.theme.get_preference(), ctx);
+                self.accepted_extensions(ui, ctx);
+                self.ignored_directories(ui, ctx);
             });
     }
 
     fn page_header(&self, ui: &mut egui::Ui) {
         ui.add_space(styles::space::PAGE_HEADER);
+    }
+}
+
+impl SettingsPage {
+    fn accepted_extensions(&self, ui: &mut egui::Ui, ctx: &Context) {
+        ui.label(LocalizedLabel::PageSettingsAppLabelAcceptedExtensions.localize());
+
+        if ui.button(egui_phosphor::regular::FILE_TXT).clicked() {
+            ctx.gui
+                .ui_channel
+                .try_send(UiCommand::OpenAcceptedExtensionsFile);
+        }
+        if ui
+            .button(egui_phosphor::regular::ARROWS_CLOCKWISE)
+            .clicked()
+        {
+            ctx.gui.ui_channel.try_send(UiCommand::ReloadIgnored);
+        }
+        ui.end_row();
+    }
+
+    fn ignored_directories(&self, ui: &mut egui::Ui, ctx: &Context) {
+        ui.label(LocalizedLabel::PageSettingsAppLabelIgnoredDirectories.localize());
+
+        if ui.button(egui_phosphor::regular::FILE_TXT).clicked() {
+            ctx.gui
+                .ui_channel
+                .try_send(UiCommand::OpenIgnoredDirectoriesFile);
+        }
+        if ui
+            .button(egui_phosphor::regular::ARROWS_CLOCKWISE)
+            .clicked()
+        {
+            ctx.gui.ui_channel.try_send(UiCommand::ReloadIgnored);
+        }
+        ui.end_row();
     }
 }
