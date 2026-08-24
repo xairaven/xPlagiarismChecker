@@ -162,7 +162,7 @@ impl Database {
             }
 
             // Normalize paths to use '/' as separator
-            let path_str = file.name()?.replace('\\', "/");
+            let path_str = file.name().replace('\\', "/");
             let parts: Vec<&str> = path_str.split('/').collect();
 
             // Ignore files not following the pattern
