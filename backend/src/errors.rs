@@ -3,7 +3,7 @@ use crate::models::database::DatabaseError;
 use thiserror::Error;
 
 #[derive(Debug, Error)]
-pub enum LibError {
+pub enum BackendError {
     #[error("IO. {0}")]
     Io(#[from] IoError),
 

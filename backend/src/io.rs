@@ -1,4 +1,4 @@
-use crate::errors::LibError;
+use crate::errors::BackendError;
 use crate::models::database::DatabaseSettings;
 use crate::models::submission::{CodeFile, Submission, SubmissionMetadata};
 use std::fs::File;
@@ -54,7 +54,7 @@ pub enum SupportedArchives {
 }
 
 impl SupportedArchives {
-    pub fn extension(&self) -> &'static str {
+    pub const fn extension(&self) -> &'static str {
         match self {
             Self::Zip => "zip",
             Self::Rar => "rar",
@@ -73,8 +73,8 @@ impl FileLoader {
     /// Main entry point. Iterates over provided paths and processes them either as archives or directories.
     pub fn import_submissions(
         paths: Vec<PathBuf>, settings: &DatabaseSettings,
-    ) -> Result<Self, LibError> {
-        let mut loader = FileLoader::default();
+    ) -> Result<Self, BackendError> {
+        let mut loader = Self::default();
 
         for path in paths {
             if !path.exists() {
@@ -175,8 +175,7 @@ impl FileLoader {
                 },
                 Err(e) => {
                     // Log warning but don't fail the whole archive if one file is corrupt
-                    log::warn!("Failed to extract '{}' from archive: {}", entry_name, e);
-                    continue;
+                    log::warn!("Failed to extract '{entry_name}' from archive: {e}");
                 },
             }
         }
@@ -205,7 +204,10 @@ impl FileLoader {
                 .map_err(|_| FileError::InvalidPattern)?;
         let mut code_files = Vec::new();
 
-        for entry in WalkDir::new(root_path).into_iter().filter_map(|e| e.ok()) {
+        for entry in WalkDir::new(root_path)
+            .into_iter()
+            .filter_map(std::result::Result::ok)
+        {
             let path = entry.path();
 
             if path.is_dir() {

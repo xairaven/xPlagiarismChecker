@@ -1,7 +1,7 @@
 // Re-exports
-/// Library error type. Critical
-pub use errors::LibError;
-/// Library error type for bad files, can be shown for users
+/// Backend error type. Critical
+pub use errors::BackendError;
+/// Backend error type for bad files, can be shown for users
 pub use io::FileError;
 /// Loading submissions from files
 pub use io::FileLoader;

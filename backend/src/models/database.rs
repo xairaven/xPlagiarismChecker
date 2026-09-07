@@ -1,4 +1,4 @@
-use crate::errors::LibError;
+use crate::errors::BackendError;
 use crate::io::IoError;
 use crate::models::ignore::IgnoreList;
 use crate::models::pattern::FileNamePattern;
@@ -62,7 +62,7 @@ impl Database {
         }
     }
 
-    pub fn save(&mut self) -> Result<(), LibError> {
+    pub fn save(&mut self) -> Result<(), BackendError> {
         // Creating temporary file and writing data
         let tmp_path = self.file_path.with_extension("tmp");
         let file = std::fs::File::create(&tmp_path).map_err(IoError::Create)?;
@@ -74,17 +74,17 @@ impl Database {
 
         // Metadata file
         zip.start_file(META_FILE_NAME, options)
-            .map_err(LibError::Zip)?;
+            .map_err(BackendError::Zip)?;
         let meta_json =
-            serde_json::to_string_pretty(&self.meta).map_err(LibError::Json)?;
+            serde_json::to_string_pretty(&self.meta).map_err(BackendError::Json)?;
         zip.write_all(meta_json.as_bytes())
             .map_err(IoError::Write)?;
 
         // Settings file
         zip.start_file(SETTINGS_FILE_NAME, options)
-            .map_err(LibError::Zip)?;
+            .map_err(BackendError::Zip)?;
         let settings_json =
-            serde_json::to_string_pretty(&self.settings).map_err(LibError::Json)?;
+            serde_json::to_string_pretty(&self.settings).map_err(BackendError::Json)?;
         zip.write_all(settings_json.as_bytes())
             .map_err(IoError::Write)?;
 
@@ -102,13 +102,14 @@ impl Database {
 
             for code_file in &submission.files {
                 let file_path = format!("{}/{}", directory_path, code_file.relative_path);
-                zip.start_file(file_path, options).map_err(LibError::Zip)?;
+                zip.start_file(file_path, options)
+                    .map_err(BackendError::Zip)?;
                 zip.write_all(code_file.content.as_bytes())
                     .map_err(IoError::Write)?;
             }
         }
 
-        zip.finish().map_err(LibError::Zip)?;
+        zip.finish().map_err(BackendError::Zip)?;
 
         // Safe file replacement (.tmp -> original)
         // Only replace the old file if writing was successful
@@ -122,9 +123,10 @@ impl Database {
         Ok(())
     }
 
-    pub fn load(path: &Path) -> Result<Self, LibError> {
+    // TODO: Rewrite function
+    pub fn load(path: &Path) -> Result<Self, BackendError> {
         let file = std::fs::File::open(path).map_err(IoError::Open)?;
-        let mut archive = zip::ZipArchive::new(file).map_err(LibError::Zip)?;
+        let mut archive = zip::ZipArchive::new(file).map_err(BackendError::Zip)?;
 
         // Reading Metadata
         let meta: DatabaseMetadata = {
@@ -133,7 +135,7 @@ impl Database {
                 .map_err(|_| DatabaseError::MissingMetadata)?;
             let mut content = String::new();
             file.read_to_string(&mut content).map_err(IoError::Read)?;
-            serde_json::from_str(&content).map_err(LibError::Json)?
+            serde_json::from_str(&content).map_err(BackendError::Json)?
         };
 
         // Reading Settings
@@ -142,7 +144,7 @@ impl Database {
                 Ok(mut file) => {
                     let mut content = String::new();
                     file.read_to_string(&mut content).map_err(IoError::Read)?;
-                    serde_json::from_str(&content).map_err(LibError::Json)?
+                    serde_json::from_str(&content).map_err(BackendError::Json)?
                 },
                 Err(_) => DatabaseSettings::default(),
             }
@@ -154,7 +156,7 @@ impl Database {
             HashMap::new();
 
         for i in 0..archive.len() {
-            let mut file = archive.by_index(i).map_err(LibError::Zip)?;
+            let mut file = archive.by_index(i).map_err(BackendError::Zip)?;
 
             // Skipping directories
             if file.is_dir() {
@@ -180,7 +182,9 @@ impl Database {
                         [SUBMISSIONS_DIR, student, assignment, rest @ ..] => (
                             student.to_string(),
                             Some(assignment.to_string()),
-                            rest.iter().map(|s| s.to_string()).collect::<Vec<String>>(),
+                            rest.iter()
+                                .map(std::string::ToString::to_string)
+                                .collect::<Vec<String>>(),
                         ),
                         _ => continue, // Files outside submissions directory are ignored
                     }
@@ -190,7 +194,7 @@ impl Database {
                         [SUBMISSIONS_DIR, assignment, student, rest @ ..] => (
                             student.to_string(),
                             Some(assignment.to_string()),
-                            rest.iter().map(|s| s.to_string()).collect(),
+                            rest.iter().map(std::string::ToString::to_string).collect(),
                         ),
                         _ => continue, // Files outside submissions directory are ignored
                     }
@@ -200,7 +204,7 @@ impl Database {
                         [SUBMISSIONS_DIR, student, rest @ ..] => (
                             student.to_string(),
                             None,
-                            rest.iter().map(|s| s.to_string()).collect(),
+                            rest.iter().map(std::string::ToString::to_string).collect(),
                         ),
                         _ => continue, // Files outside submissions directory are ignored
                     }
@@ -215,9 +219,7 @@ impl Database {
                 Ok(content) => content,
                 Err(error) => {
                     log::warn!(
-                        "File '{}' contains invalid UTF-8 and will be skipped. Error: {}",
-                        path_str,
-                        error
+                        "File '{path_str}' contains invalid UTF-8 and will be skipped. Error: {error}"
                     );
                     continue;
                 },

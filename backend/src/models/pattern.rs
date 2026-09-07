@@ -4,10 +4,10 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub enum FileNamePattern {
-    /// Example: "Petrov_Lab1.zip"
+    /// Example: ``Petrov_Lab1.zip``
     StudentTask { separator: char },
 
-    /// Example: "Lab1_Petrov.zip"
+    /// Example: ``Lab1_Petrov.zip``
     TaskStudent { separator: char },
 
     /// Without task (file title = student): "Petrov.zip"
@@ -29,9 +29,9 @@ impl SubmissionMetadata {
             FileNamePattern::StudentTask { separator } => {
                 let (student, task) = filename
                     .split_once(*separator)
-                    .ok_or(DatabaseError::InvalidPattern(filename.to_string()))?;
+                    .ok_or_else(|| DatabaseError::InvalidPattern(filename.to_string()))?;
 
-                Ok(SubmissionMetadata {
+                Ok(Self {
                     student_name: student.to_string(),
                     assignment_title: Some(task.to_string()),
                 })
@@ -39,14 +39,14 @@ impl SubmissionMetadata {
             FileNamePattern::TaskStudent { separator } => {
                 let (task, student) = filename
                     .split_once(*separator)
-                    .ok_or(DatabaseError::InvalidPattern(filename.to_string()))?;
+                    .ok_or_else(|| DatabaseError::InvalidPattern(filename.to_string()))?;
 
-                Ok(SubmissionMetadata {
+                Ok(Self {
                     student_name: student.to_string(),
                     assignment_title: Some(task.to_string()),
                 })
             },
-            FileNamePattern::StudentOnly => Ok(SubmissionMetadata {
+            FileNamePattern::StudentOnly => Ok(Self {
                 student_name: filename.to_string(),
                 assignment_title: None,
             }),
